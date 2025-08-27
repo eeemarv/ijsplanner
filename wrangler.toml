@@ -1,6 +1,0 @@
-name = "ijsplanner"
-main = "./.svelte-kit/cloudflare/_worker.js"
-compatibility_date = "2025-08-26"
-
-[site]
-bucket = "./.svelte-kit/cloudflare/assets"
