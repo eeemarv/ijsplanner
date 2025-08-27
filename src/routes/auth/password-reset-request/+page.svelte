@@ -1,4 +1,5 @@
 <script lang="ts">
+  const appUrl = import.meta.env.VITE_PUBLIC_APP_URL;
   import AuthCard from '$lib/components/AuthCard.svelte';
   import { supabase } from '$lib/supabase';
 
@@ -13,7 +14,7 @@
     errorMsg = '';
     successMsg = '';
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/password-reset`
+      redirectTo: `${appUrl}/auth/password-reset`
     });
     loading = false;
     if (error) {
