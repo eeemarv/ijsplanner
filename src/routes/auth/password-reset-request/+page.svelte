@@ -8,7 +8,7 @@
   let successMsg = '';
   let errorMsg = '';
 
-  async function sendReset(e: Event) {
+  const sendReset = async (e: Event) => {
     e.preventDefault();
     loading = true;
     errorMsg = '';
@@ -28,8 +28,10 @@
 <AuthCard {errorMsg} {successMsg} title="Paswoord Reset">
   {#if !successMsg}
     <form class="form-control" on:submit|preventDefault={sendReset}>
-      <input class="input input-bordered w-full mb-2 placeholder-info" type="email" placeholder="Je email adres" bind:value={email} required />
-
+      <label class="floating-label">
+        <span>Je email adres</span>
+        <input class="input input-bordered w-full mb-2 placeholder-info" type="email" placeholder="Je email adres" bind:value={email} required />
+      </label>
       <button class="btn btn-outline" disabled={loading}>
         Stuur paswoord reset link
       </button>

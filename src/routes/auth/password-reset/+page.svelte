@@ -17,7 +17,7 @@
     }
   });
 
-  async function setPassword(e: Event) {
+  const setPassword = async (e: Event) => {
     e.preventDefault();
     errorMsg = '';
     successMsg = '';

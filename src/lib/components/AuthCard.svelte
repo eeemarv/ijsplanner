@@ -10,7 +10,7 @@
   <div class="card w-full max-w-md shadow-xl bg-base-100">
     <div class="card-body">
       <h1 class="card-title justify-center">
-        IJsplanner{#if title}- {title}{/if}
+        {title}
       </h1>
 
       {#if loading}

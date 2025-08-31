@@ -35,7 +35,7 @@
   </form>
 
   <p class="pt-4">
-    <a href="/auth/password-reset-request" class="link link-info">
+    <a href="/auth/password-reset-request" class="link link-primary">
       Nog geen paswoord
       of paswoord vergeten?
     </a>
