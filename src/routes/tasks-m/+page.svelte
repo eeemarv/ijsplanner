@@ -1,4 +1,5 @@
 <script>
+  import Authenticated from "$lib/components/Authenticated.svelte";
   import { CirclePlus, Plus } from "lucide-svelte";
 
   const schedule = [
@@ -41,6 +42,8 @@
     // Add more days as needed
   ]
 </script>
+
+<Authenticated />
 
 <div class="p-4">
   {#each schedule as day, index}

@@ -1,8 +1,11 @@
-<script>
-    import ThemeDropDown from "./ThemeDropDown.svelte";
+<script lang="ts">
+  import { user } from "$lib/stores/user";
+  import { supabase } from "$lib/supabase";
+  import ThemeDropDown from "./ThemeDropDown.svelte";
+  import UserDropDown from "./UserDropDown.svelte";
 
-  export let user = null; // pass this from layout
   let isOpen = false;
+
 </script>
 
 <nav class="navbar bg-base-100 shadow-md">
@@ -10,15 +13,18 @@
     <a href="/" class="btn btn-ghost normal-case text-xl">IJsplanner</a>
   </div>
 
-  {#if user}
+  {#if $user}
     <!-- When logged in -->
+    <UserDropDown />
+    <!--
     <div class="hidden md:flex">
       <ul class="menu menu-horizontal px-1">
-        <li><a href="/">Home</a></li>
+        <li><a href="/tasks-m">tasks</a></li>
 
-        <li><a href="/logout">Log uit</a></li>
+        <li><button on:click={handleSignOut}>Log uit</button></li>
       </ul>
     </div>
+    -->
 
     <!-- Mobile Menu Button -->
     <div class="md:hidden">
@@ -31,6 +37,7 @@
       </button>
     </div>
   {/if}
+
   <ThemeDropDown />
 </nav>
 

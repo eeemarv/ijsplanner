@@ -2,14 +2,14 @@ import { writable, type Writable } from 'svelte/store';
 import { getChannel, releaseChannel } from './channel';
 
 type Row = { [key: string]: boolean | string | number };
-type StoreMap<T extends Row, K extends keyof Row> = Map<T[K], T>;
+type StoreMap<T extends Row> = Map<T[string], T>;
 
 // ---- Store factory ----
 export const realtimeStore = <T extends Row, K extends keyof T>(
   table: string,
   key: K
 ) => {
-  const store: Writable<StoreMap<T, K>> = writable(new Map());
+  const store: Writable<StoreMap<T>> = writable(new Map());
 
   let subscribed = false;
 
