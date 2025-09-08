@@ -1,0 +1,91 @@
+<script lang="ts">
+  import { supabase } from "$lib/supabase";
+  import { goto } from "$app/navigation";
+  import { ChevronLeft, Plus, UserCheck } from "lucide-svelte";
+
+  let disabled = false;
+  let email = '';
+  let username = '';
+  let successMsg = '';
+  let errorMsg = '';
+
+  const addUser = async () => {
+    disabled = true;
+    console.log('ADD USER ');
+    const res = await supabase.functions.invoke('add-user', {
+      body: { email, username }
+    });
+
+    console.log('RES');
+    console.log(res);
+
+//    message = data.error ? data.error.message : `User ${username} created!`;
+  }
+</script>
+
+<div class="p-4">
+  <div class="flex items-center justify-between mb-4">
+    <h1 class="text-2xl">
+      <UserCheck class="inline-block" />
+      Voeg Gebruiker Toe
+    </h1>
+    <button
+      class="btn btn-info"
+      on:click={() => goto('/mng-users')}
+    >
+      <ChevronLeft />
+      Terug
+    </button>
+  </div>
+
+  {#if successMsg}
+    <div class="alert alert-success">
+      {successMsg}
+    </div>
+  {/if}
+
+  {#if errorMsg}
+    <div class="alert alert-error">
+      {errorMsg}
+    </div>
+  {/if}
+
+  <form on:submit|preventDefault={addUser} class="space-y-2">
+    <div class="overflow-x-auto">
+      <div class="p-4">
+        <div class="mb-3">
+          <fieldset class="fieldset bg-base-100 border-base-300 rounded-box border">
+            <legend class="fieldset-legend text-lg">
+              Email
+            </legend>
+              <input type="email"
+                {disabled}
+                bind:value={email}
+                class="input input-bordered invalid:border-error invalid:text-error w-full"
+                required
+              />
+          </fieldset>
+          <fieldset class="fieldset bg-base-100 border-base-300 rounded-box border">
+            <legend class="fieldset-legend text-lg">
+              Naam
+            </legend>
+            <input type="text"
+              {disabled}
+              bind:value={username}
+              class="input input-bordered invalid:border-error invalid:text-error w-full"
+              required
+              minlength="3"
+            />
+          </fieldset>
+        </div>
+        <button type="submit"
+          class="btn btn-success"
+          {disabled}
+        >
+          <Plus />
+          Voeg toe
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

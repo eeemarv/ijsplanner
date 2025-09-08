@@ -2,7 +2,6 @@
   import { onMount } from 'svelte';
   import { supabase } from '$lib/supabase';
   import { requireAuth } from '$lib/guards';
-    import Authenticated from '$lib/components/Authenticated.svelte';
 
   let tasks: any[] = [];
   let me: any = null;
@@ -35,7 +34,7 @@
 
 </script>
 
-<Authenticated />
+
 
 <div class="p-4 max-w-3xl mx-auto">
   <div class="flex justify-between items-center mb-4">

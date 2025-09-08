@@ -1,6 +1,5 @@
 <script lang="ts">
   import { user } from "$lib/stores/user";
-  import Logo from "./Logo.svelte";
   import ThemeDropDown from "./ThemeDropDown.svelte";
   import UserDropDown from "./UserDropDown.svelte";
 
@@ -9,16 +8,13 @@
 </script>
 
 <nav class="navbar bg-base-100 shadow-md">
-  <Logo />
-
-
-  {#if $user}
-    <UserDropDown />
-  {/if}
+  <div class="flex-1">
+    <span class="normal-case text-xl">IJsplanner</span>
+  </div>
 
   {#if false && $user}
     <!-- When logged in -->
-
+    <UserDropDown />
     <!--
     <div class="hidden md:flex">
       <ul class="menu menu-horizontal px-1">

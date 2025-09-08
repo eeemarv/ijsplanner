@@ -1,0 +1,1 @@
+const julian = 2440588 + Math.trunc((new Date(timestampStr + 'Z')).getTime() / 86400000);
