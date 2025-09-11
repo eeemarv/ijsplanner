@@ -34,14 +34,14 @@
 <div class="p-4 max-w-3xl mx-auto">
   <div class="flex justify-between items-center mb-4">
     <h1 class="text-2xl font-bold">Admin</h1>
-    <button class="btn" on:click={async () => { await supabase.auth.signOut(); goto('/'); }}>Sign out</button>
+    <button class="btn" onclick={async () => { await supabase.auth.signOut(); goto('/'); }}>Sign out</button>
   </div>
 
   <div class="card bg-base-100 shadow mb-6">
     <div class="card-body">
       <h2 class="card-title">Create task</h2>
       {#if errorMsg}<div class="alert alert-error">{errorMsg}</div>{/if}
-      <form class="form-control gap-3" on:submit|preventDefault={createTask}>
+      <form class="form-control gap-3" onsubmit={createTask}>
         <input class="input input-bordered" placeholder="Title" bind:value={title} required />
         <textarea class="textarea textarea-bordered" placeholder="Description" bind:value={description}></textarea>
         <button class="btn btn-primary">Add</button>
@@ -58,7 +58,11 @@
       <li class="card bg-base-100 shadow">
         <div class="card-body">
           <h3 class="card-title">{t.title}</h3>
-          {#if t.description}<p class="opacity-80">{t.description}</p>{/if}
+          {#if t.description}
+          <p class="opacity-80">
+            {t.description}
+          </p>
+          {/if}
         </div>
       </li>
     {/each}

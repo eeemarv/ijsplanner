@@ -23,9 +23,21 @@
 
 <AuthCard {errorMsg} {loading} title="Login">
   <form class="form-control gap-3" on:submit|preventDefault={login}>
-    <input class="input input-bordered w-full mb-2 placeholder-info" type="email" placeholder="Email" bind:value={email} required />
+    <input
+      class="input input-bordered w-full mb-2 placeholder-info"
+      type="email"
+      placeholder="Email"
+      bind:value={email}
+      required
+    />
 
-    <input class="input input-bordered w-full mb-2 placeholder-info" type="password" placeholder="Paswoord" bind:value={password} required />
+    <input
+      class="input input-bordered w-full mb-2 placeholder-info"
+      type="password"
+      placeholder="Paswoord"
+      bind:value={password}
+      required
+    />
 
     <p>
       <button class="btn btn-primary" disabled={loading}>

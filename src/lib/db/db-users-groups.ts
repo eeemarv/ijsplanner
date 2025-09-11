@@ -1,8 +1,8 @@
 import { supabase } from "$lib/supabase";
 
-export const insertSubAlarm = async (group_id:string, user_id:string) => {
+export const insertUsersGroups = async (group_id:string, user_id:string) => {
   const { error } = await supabase
-    .from('sub_alarm')
+    .from('users_groups')
     .insert({group_id, user_id});
 
   if (error) {
@@ -10,9 +10,9 @@ export const insertSubAlarm = async (group_id:string, user_id:string) => {
   }
 };
 
-export const deleteSubAlarm = async (group_id: string, user_id: string) => {
+export const deleteUsersGroups = async (group_id: string, user_id: string) => {
   const { error } = await supabase
-    .from('sub_alarm')
+    .from('users_groups')
     .delete()
     .eq('group_id', group_id)
     .eq('user_id', user_id);

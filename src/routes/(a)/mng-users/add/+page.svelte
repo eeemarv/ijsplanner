@@ -9,7 +9,8 @@
   let successMsg = '';
   let errorMsg = '';
 
-  const addUser = async () => {
+  const addUser = async (e: Event) => {
+    e.preventDefault();
     disabled = true;
     console.log('ADD USER ');
     const res = await supabase.functions.invoke('add-user', {
@@ -31,7 +32,7 @@
     </h1>
     <button
       class="btn btn-info"
-      on:click={() => goto('/mng-users')}
+      onclick={() => goto('/mng-users')}
     >
       <ChevronLeft />
       Terug
@@ -50,7 +51,7 @@
     </div>
   {/if}
 
-  <form on:submit|preventDefault={addUser} class="space-y-2">
+  <form onsubmit={addUser} class="space-y-2">
     <div class="overflow-x-auto">
       <div class="p-4">
         <div class="mb-3">

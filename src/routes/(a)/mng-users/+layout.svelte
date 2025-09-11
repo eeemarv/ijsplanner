@@ -1,9 +1,9 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { user } from "$lib/stores/user";
-  import { roleManageUsersSet } from "$lib/stores/role-manage-users";
+  import { roleManageUsers } from "$lib/stores/role-manage-users.svelte";
 
-  $: if (!$roleManageUsersSet.has($user.id)) {
+  $: if (!roleManageUsers.set.has($user?.id)) {
     goto('/');
   }
 </script>

@@ -1,8 +1,8 @@
 <script lang="ts">
   import { page } from "$app/state";
-    import { roleManageUsersSet } from "$lib/stores/role-manage-users";
+  import { roleManageUsers } from "$lib/stores/role-manage-users.svelte";
   import { user } from "$lib/stores/user";
-  import { usernamesMap } from "$lib/stores/usernames";
+  import { usernames } from "$lib/stores/usernames.svelte";
   import { supabase } from "$lib/supabase";
   import { Bell, CircleUser, LogOut, User, Users } from "lucide-svelte";
 
@@ -18,12 +18,12 @@
 <div class="dropdown dropdown-end">
   <label tabindex="-1" class="btn m-1" for="theme_dropdown" title="Vormgeving">
     <User size="30" strokeWidth="2" />
-    {#if $user && $user.id && $usernamesMap.has($user.id)}
-      { $usernamesMap.get($user.id) }
+    {#if $user && $user?.id && usernames.map.has($user?.id)}
+      { usernames.map.get($user?.id) }
     {/if}
   </label>
   <ul tabindex="-1" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52" id="theme_dropdown">
-    {#if $roleManageUsersSet.has($user.id)}
+    {#if roleManageUsers.set.has($user?.id)}
       <li>
         <a href="/mng-users"
           class:menu-active={page.url.pathname === '/mng-users'}
@@ -51,7 +51,7 @@
       </a>
     </li>
     <li>
-      <button on:click={handleSignOut}>
+      <button onclick={handleSignOut}>
         <LogOut />
         Log uit
       </button>

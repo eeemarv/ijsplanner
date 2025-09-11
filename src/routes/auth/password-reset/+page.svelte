@@ -33,7 +33,7 @@
 
 <AuthCard {errorMsg} {successMsg} {loading} title="Kies een nieuw paswoord">
   {#if !loading && !errorMsg && !successMsg}
-    <form class="form-control" on:submit|preventDefault={setPassword}>
+    <form class="form-control" onsubmit={setPassword}>
       <input class="input input-bordered w-full mb-2 placeholeder-info" type="password" placeholder="Nieuw paswoord" bind:value={password} required />
       <button class="btn btn-primary">
         Bewaar paswoord
@@ -41,7 +41,7 @@
     </form>
   {/if}
   {#if errorMsg}
-    <button class="btn btn-outline" on:click={() => errorMsg = ''}>
+    <button class="btn btn-outline" onclick={() => errorMsg = ''}>
       Opnieuw
     </button>
   {/if}

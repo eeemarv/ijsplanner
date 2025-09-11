@@ -1,12 +1,10 @@
+// supabase functions deploy disable-user --no-verify-jwt
 // supabase/functions/disable-user/index.ts
 // @ts-ignore
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
 // @ts-ignore
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-
-
-// Supabase service client (for updating users)
 const supabaseAdmin = createClient(
   // @ts-ignore
   Deno.env.get('SUPABASE_URL')!,

@@ -1,13 +1,13 @@
 <script lang="ts">
   import { user } from "$lib/stores/user";
-  import { groupsMap } from "$lib/stores/groups";
-  import { usernamesMap } from "$lib/stores/usernames";
-  import { usersGroupsMap } from "$lib/stores/users-groups";
+  import { groups } from "$lib/stores/groups.svelte";
+  import { usernames } from "$lib/stores/usernames.svelte";
+  import { usersGroups } from "$lib/stores/users-groups.svelte";
   import { capitalize } from "$lib/func";
   import { CircleUser } from "lucide-svelte";
 
   const getGroupName = (group_id: string) => {
-    return capitalize($groupsMap.get(group_id) ?? '** ERROR **');
+    return capitalize(groups.map.get(group_id) ?? '** ERROR **');
   };
 
 </script>
@@ -28,22 +28,22 @@
 
         <tr>
           <th class="border w-0 whitespace-nowrap">Naam</th>
-          <td class="border">{$usernamesMap.get($user.id)}</td>
+          <td class="border">{usernames.map.get($user?.id)}</td>
         </tr>
 
         <tr>
           <th class="border w-0 whitespace-nowrap">Email</th>
-          <td class="border">{$user.email}</td>
+          <td class="border">{$user?.email}</td>
         </tr>
 
-        {#if !$usersGroupsMap.has($user.id) || ($usersGroupsMap.get($user.id)?.size ?? 0) < 2}
+        {#if !usersGroups.map.has($user?.id) || (usersGroups.map.get($user?.id)?.size ?? 0) < 2}
           <tr>
             <th class="border w-0 whitespace-nowrap">
               Groep
             </th>
             <td class="border">
-              {#if $usersGroupsMap.has($user.id)}
-                {getGroupName([...$usersGroupsMap.get($user.id) ?? []][0])}
+              {#if usersGroups.map.has($user?.id)}
+                {getGroupName([...usersGroups.map.get($user?.id) ?? []][0])}
               {:else}
                 <span class="badge badge-warning">
                   Geen lid van een groep
@@ -53,14 +53,14 @@
           </tr>
         {:else}
           <tr>
-            <th rowspan="{$usersGroupsMap.get($user.id)?.size ?? 1}"  class="border w-0 whitespace-nowrap">
+            <th rowspan="{usersGroups.map.get($user?.id)?.size ?? 1}"  class="border w-0 whitespace-nowrap">
               Groepen
             </th>
             <td class="border">
-              {getGroupName([...$usersGroupsMap.get($user.id) ?? []][0])}
+              {getGroupName([...usersGroups.map.get($user?.id) ?? []][0])}
             </td>
           </tr>
-          {#each [...$usersGroupsMap.get($user.id)?.values() ?? []] as group_id,i}
+          {#each [...usersGroups.map.get($user?.id)?.values() ?? []] as group_id,i}
             {#if i}
               <tr>
                 <td class="border">

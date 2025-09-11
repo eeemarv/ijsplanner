@@ -20,14 +20,14 @@
       <ul class="menu menu-horizontal px-1">
         <li><a href="/tasks-m">tasks</a></li>
 
-        <li><button on:click={handleSignOut}>Log uit</button></li>
+        <li><button onclick={handleSignOut}>Log uit</button></li>
       </ul>
     </div>
     -->
 
     <!-- Mobile Menu Button -->
     <div class="md:hidden">
-      <button aria-label="menu" class="btn btn-ghost" on:click={() => (isOpen = !isOpen)}>
+      <button aria-label="menu" class="btn btn-ghost" onclick={() => (isOpen = !isOpen)}>
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
           viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

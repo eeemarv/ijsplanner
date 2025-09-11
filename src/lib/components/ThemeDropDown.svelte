@@ -28,7 +28,7 @@
         class:font-bold={$theme === t}
         class:bg-slate-400={$theme === t}
       >
-        <button on:click={() => $theme = t} >
+        <button onclick={() => $theme = t} >
           {t}
         </button>
       </li>

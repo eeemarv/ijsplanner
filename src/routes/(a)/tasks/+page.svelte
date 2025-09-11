@@ -63,9 +63,9 @@
             </div>
             <div class="card-actions">
               {#if !t.assigned_to}
-                <button class="btn btn-primary" on:click={() => claim(t.id)}>Claim</button>
+                <button class="btn btn-primary" onclick={() => claim(t.id)}>Claim</button>
               {:else if t.assigned_to === me?.id}
-                <button class="btn" on:click={() => unclaim(t.id)}>Unclaim</button>
+                <button class="btn" onclick={() => unclaim(t.id)}>Unclaim</button>
               {:else}
                 <button class="btn btn-disabled">Taken</button>
               {/if}
