@@ -1,7 +1,8 @@
 import { supabase } from '$lib/supabase';
-import { user } from './user';
 import { id2 } from '$lib/func';
 import { SvelteSet } from 'svelte/reactivity';
+
+let ch: ReturnType<typeof supabase.channel> | null = null;
 
 export const subOverview = $state({
   set: new SvelteSet<string>()
@@ -23,17 +24,8 @@ export const loadSubOverview = async () => {
   }
 };
 
-user.subscribe(async ($user)  => {
-  if (!$user){
-    subOverview.set.clear();
-    return;
-  }
-
-  await loadSubOverview();
-});
-
-export const channelSubOverview = () => {
-  const ch = supabase.channel('sub-overview')
+const subscribeSubOverview = () => {
+  ch = supabase.channel('sub-overview')
   .on('postgres_changes',
     { event: 'DELETE', schema: 'public', table: 'sub_overview' },
     (payload) => {
@@ -51,4 +43,19 @@ export const channelSubOverview = () => {
       subOverview.set.add(id2(group_id, user_id));
     }
   ).subscribe();
+};
+
+export const initSubOverview = async () => {
+  await loadSubOverview();
+  if (!ch){
+    subscribeSubOverview();
+  }
+};
+
+export const clearSubOverview = async () => {
+  if (ch){
+    supabase.removeChannel(ch);
+    ch = null;
+  }
+  subOverview.set.clear();
 };

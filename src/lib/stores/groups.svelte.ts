@@ -1,6 +1,7 @@
 import { supabase } from '$lib/supabase';
-import { user } from './user';
 import { SvelteMap } from 'svelte/reactivity';
+
+let ch: ReturnType<typeof supabase.channel> | null = null;
 
 export const groups = $state({
   map: new SvelteMap<string, string>(),
@@ -26,18 +27,8 @@ export const loadGroups = async () => {
   }
 };
 
-user.subscribe(async ($user) => {
-  if (!$user){
-    groups.map.clear();
-    groups.rev.clear();
-    return;
-  }
-
-  await loadGroups();
-});
-
-export const channelGroups = () => {
-  const ch = supabase.channel('groups')
+const subscribeGroups = () => {
+  ch = supabase.channel('groups')
   .on('postgres_changes',
     { event: 'DELETE', schema: 'public', table: 'groups' },
     (payload) => {
@@ -60,4 +51,20 @@ export const channelGroups = () => {
       groups.rev.set(payload.new.name, payload.new.id);
     }
   ).subscribe();
+};
+
+export const initGroups = async () => {
+  await loadGroups();
+  if (!ch){
+    subscribeGroups();
+  }
+};
+
+export const clearGroups = async () => {
+  if (ch){
+    supabase.removeChannel(ch);
+    ch = null;
+  }
+  groups.map.clear();
+  groups.rev.clear();
 };

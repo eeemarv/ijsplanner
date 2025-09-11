@@ -16,8 +16,9 @@
     loading = false;
     if (error) {
       errorMsg = error.message;
+    } else {
+      goto('/t');
     }
-    else goto('/tasks');
   }
 </script>
 

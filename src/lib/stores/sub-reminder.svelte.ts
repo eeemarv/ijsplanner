@@ -1,7 +1,8 @@
 import { supabase } from '$lib/supabase';
-import { user } from './user';
 import { id2 } from '$lib/func';
 import { SvelteSet } from 'svelte/reactivity';
+
+let ch: ReturnType<typeof supabase.channel> | null = null;
 
 export const subReminder = $state({
   set: new SvelteSet<string>()
@@ -23,17 +24,8 @@ export const loadSubReminder = async () => {
   }
 };
 
-user.subscribe(async ($user) => {
-  if (!$user){
-    subReminder.set.clear();
-    return;
-  }
-
-  await loadSubReminder();
-});
-
-export const channelSubReminder = () => {
-  const ch = supabase.channel('sub-reminder')
+const subscribeSubReminder = () => {
+  ch = supabase.channel('sub-reminder')
   .on('postgres_changes',
     { event: 'DELETE', schema: 'public', table: 'sub_reminder' },
     (payload) => {
@@ -51,4 +43,19 @@ export const channelSubReminder = () => {
       subReminder.set.add(id2(group_id, user_id));
     }
   ).subscribe();
+};
+
+export const initSubReminder = async () => {
+  await loadSubReminder();
+  if (!ch){
+    subscribeSubReminder();
+  }
+};
+
+export const clearSubReminder = async () => {
+  if (ch){
+    supabase.removeChannel(ch);
+    ch = null;
+  }
+  subReminder.set.clear();
 };

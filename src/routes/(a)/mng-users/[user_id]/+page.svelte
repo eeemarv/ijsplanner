@@ -3,8 +3,8 @@
   import { usernames } from "$lib/stores/usernames.svelte";
   import { groups } from "$lib/stores/groups.svelte";
   import { usersGroups } from "$lib/stores/users-groups.svelte";
-  import { roleManageSchedules } from "$lib/stores/role-manage-schedules.svelte";
-  import { roleManageTasks } from "$lib/stores/role-manage-tasks.svelte";
+  import { roleSchedules } from "$lib/stores/role-schedules.svelte";
+  import { roleTasks } from "$lib/stores/role-tasks.svelte";
   import { subOverview } from "$lib/stores/sub-overview.svelte";
   import { subReminder } from "$lib/stores/sub-reminder.svelte";
   import { subAlarm } from "$lib/stores/sub-alarm.svelte";
@@ -14,8 +14,8 @@
   import { deleteSubOverview, insertSubOverview } from "$lib/db/db-sub-overview";
   import { deleteSubReminder, insertSubReminder } from "$lib/db/db-sub-reminder";
   import { deleteSubAlarm, insertSubAlarm } from "$lib/db/db-sub-alarm";
-  import { deleteRoleManageSchedules, insertRoleManageSchedules } from "$lib/db/db-role-manage-schedules";
-  import { deleteRoleManageTasks, insertRoleManageTasks } from "$lib/db/db-role-manage-tasks";
+  import { deleteRoleSchedules, insertRoleSchedules } from "$lib/db/db-role-schedules";
+  import { deleteRoleTasks, insertRoleTasks } from "$lib/db/db-role-tasks";
   import { deleteUsersGroups, insertUsersGroups } from "$lib/db/db-users-groups";
 	import type { PageProps } from './$types';
   import { supabase } from "$lib/supabase";
@@ -109,11 +109,11 @@
     }
   };
 
-  const toggleRoleManageTasks = async (group_id: string) => {
+  const toggleRoleTasks = async (group_id: string) => {
     disabled = true;
-    if (roleManageTasks.set.has(id2(group_id, user_id))){
+    if (roleTasks.set.has(id2(group_id, user_id))){
       try {
-        await deleteRoleManageTasks(group_id, user_id);
+        await deleteRoleTasks(group_id, user_id);
       } catch (err) {
         console.log(err);
       } finally {
@@ -122,7 +122,7 @@
       return;
     }
     try {
-      await insertRoleManageTasks(group_id, user_id);
+      await insertRoleTasks(group_id, user_id);
     } catch (err) {
       console.log(err);
     } finally {
@@ -130,11 +130,11 @@
     }
   };
 
-  const toggleRoleManageSchedules = async (group_id: string) => {
+  const toggleRoleSchedules = async (group_id: string) => {
     disabled = true;
-    if (roleManageSchedules.set.has(id2(group_id, user_id))){
+    if (roleSchedules.set.has(id2(group_id, user_id))){
       try {
-        await deleteRoleManageSchedules(group_id, user_id);
+        await deleteRoleSchedules(group_id, user_id);
       } catch (err) {
         console.log(err);
       } finally {
@@ -143,7 +143,7 @@
       return;
     }
     try {
-      await insertRoleManageSchedules(group_id, user_id);
+      await insertRoleSchedules(group_id, user_id);
     } catch (err) {
       console.log(err);
     } finally {
@@ -340,9 +340,9 @@
 
       <label class="label text-lg text-wrap inline-flex">
         <input type="checkbox" {disabled}
-          checked={roleManageTasks.set.has(id2(group_id, user_id))}
+          checked={roleTasks.set.has(id2(group_id, user_id))}
           class="checkbox checkbox-xl"
-          onchange={() => toggleRoleManageTasks(group_id)}
+          onchange={() => toggleRoleTasks(group_id)}
         />
         <span>
           <b>Taken Beheer</b>
@@ -351,9 +351,9 @@
 
       <label class="label text-lg text-wrap inline-flex">
         <input type="checkbox" {disabled}
-          checked={roleManageSchedules.set.has(id2(group_id, user_id))}
+          checked={roleSchedules.set.has(id2(group_id, user_id))}
           class="checkbox checkbox-xl"
-          onchange={() => toggleRoleManageSchedules(group_id)}
+          onchange={() => toggleRoleSchedules(group_id)}
         />
         <span>
           <b>Schema Taken Beheer</b>

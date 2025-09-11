@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { user } from "$lib/stores/user";
+  import { user } from "$lib/stores/user.svelte";
   import ThemeDropDown from "./ThemeDropDown.svelte";
   import UserDropDown from "./UserDropDown.svelte";
 
@@ -12,7 +12,7 @@
     <span class="normal-case text-xl">IJsplanner</span>
   </div>
 
-  {#if false && $user}
+  {#if false && user.id}
     <!-- When logged in -->
     <UserDropDown />
     <!--
@@ -40,7 +40,7 @@
   <ThemeDropDown />
 </nav>
 
-{#if user && isOpen}
+{#if user.id && isOpen}
   <ul class="menu bg-base-100 w-full p-2 rounded-box md:hidden">
     <li>
       <a href="/account">Instellingen

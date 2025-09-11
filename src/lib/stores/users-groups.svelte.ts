@@ -1,8 +1,9 @@
 import { supabase } from '$lib/supabase';
-import { user } from './user';
 import { id2 } from '$lib/func';
 import { SvelteSet } from 'svelte/reactivity';
 import { SvelteMap } from 'svelte/reactivity';
+
+let ch: ReturnType<typeof supabase.channel> | null = null;
 
 export const usersGroups = $state({
   map: new SvelteMap<string,SvelteSet<string>>(),
@@ -30,21 +31,8 @@ export const loadUsersGroups = async () => {
   }
 };
 
-user.subscribe(async ($user) => {
-  usersGroups.map.clear();
-  usersGroups.set.clear();
-
-  if (!$user){
-    usersGroups.set.clear();
-    usersGroups.map.clear();
-    return;
-  }
-
-  await loadUsersGroups();
-});
-
-export const channelUsersGroups = () => {
-  const ch = supabase.channel('users-groups')
+const subscribeUsersGroups = () => {
+  ch = supabase.channel('users-groups')
   ch.on(
     'postgres_changes',
     { event: 'DELETE', schema: 'public', table: 'users_groups' },
@@ -79,4 +67,20 @@ export const channelUsersGroups = () => {
       s.add(group_id);
     }
   ).subscribe();
+};
+
+export const initUsersGroups = async () => {
+  await loadUsersGroups();
+  if (!ch){
+    subscribeUsersGroups();
+  }
+};
+
+export const clearUsersGroups = async () => {
+  if (ch){
+    supabase.removeChannel(ch);
+    ch = null;
+  }
+  usersGroups.set.clear();
+  usersGroups.map.clear();
 };

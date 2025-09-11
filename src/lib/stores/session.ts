@@ -1,14 +1,18 @@
 import { writable } from 'svelte/store';
 import { supabase } from '$lib/supabase';
 
+/*
+export const session = $state({
+  data: null
+});
+*/
+
 export const session = writable<any>(null);
 
 const init = async () => {
-  // get initial session
   const { data } = await supabase.auth.getSession();
-  session.set(data.session);
 
-  // subscribe to changes (login, logout, refresh)
+  // refresh, login, logout
   supabase.auth.onAuthStateChange((_event, newSession) => {
     session.set(newSession);
   });

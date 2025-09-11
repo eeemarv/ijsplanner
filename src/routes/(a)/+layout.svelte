@@ -1,8 +1,8 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import { user } from "$lib/stores/user";
+  import { user } from "$lib/stores/user.svelte";
 
-  $: if (!$user) {
+  $: if (!user.id) {
     goto('/');
   }
 </script>

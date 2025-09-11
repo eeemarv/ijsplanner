@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { user } from "$lib/stores/user";
+  import { user } from "$lib/stores/user.svelte";
   import Logo from "./Logo.svelte";
   import ThemeDropDown from "./ThemeDropDown.svelte";
   import UserDropDown from "./UserDropDown.svelte";
@@ -12,11 +12,11 @@
   <Logo />
 
 
-  {#if $user}
+  {#if user.id}
     <UserDropDown />
   {/if}
 
-  {#if false && $user}
+  {#if false && user.id}
     <!-- When logged in -->
 
     <!--

@@ -1,36 +1,10 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { supabase } from '$lib/supabase';
-  import { requireAuth } from '$lib/guards';
 
   let tasks: any[] = [];
   let me: any = null;
   let loading = true;
   let errorMsg = '';
 
-  async function load() {
-    const { data: { session } } = await supabase.auth.getSession();
-    me = session?.user ?? null;
-    const { data, error } = await supabase.from('tasks').select('*').order('created_at', { ascending: false });
-    if (error) errorMsg = error.message;
-    tasks = data ?? [];
-    loading = false;
-  }
-
-  async function claim(id: string) {
-    await supabase.rpc('claim_task', { p_task_id: id });
-    await load();
-  }
-
-  async function unclaim(id: string) {
-    await supabase.rpc('unclaim_task', { p_task_id: id });
-    await load();
-  }
-
-  onMount(async () => {
-    await requireAuth();
-    await load();
-  });
 
 </script>
 
@@ -63,9 +37,9 @@
             </div>
             <div class="card-actions">
               {#if !t.assigned_to}
-                <button class="btn btn-primary" onclick={() => claim(t.id)}>Claim</button>
+                <button class="btn btn-primary" onclick={() => {}}>Claim</button>
               {:else if t.assigned_to === me?.id}
-                <button class="btn" onclick={() => unclaim(t.id)}>Unclaim</button>
+                <button class="btn" onclick={() => {}}>Unclaim</button>
               {:else}
                 <button class="btn btn-disabled">Taken</button>
               {/if}
