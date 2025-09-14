@@ -1,5 +1,5 @@
 <script>
-  import { CirclePlus, Play, PlayCircle, Plus } from "lucide-svelte";
+  import { CirclePlus, Plus } from "lucide-svelte";
 
   const schedule = [
     {
@@ -56,7 +56,7 @@
     <div class="px-2 py-1{index % 2 ? '' : ' bg-base-200'}">
 
 
-      <h2 class="text-lg font-semibold">{#if !index}<Play class="inline-block" /> {/if}{day.date}</h2>
+      <h2 class="text-lg font-semibold">{#if !index}&#9654; {/if}{day.date}</h2>
       <div class="flex flex-wrap gap-2 font-semibold">
         {#each day.tasks as task}
 

@@ -8,9 +8,9 @@
   import { subOverview } from "$lib/stores/sub-overview.svelte";
   import { subReminder } from "$lib/stores/sub-reminder.svelte";
   import { subAlarm } from "$lib/stores/sub-alarm.svelte";
-  import { ChevronLeft, UserPen } from "lucide-svelte";
+  import { BellRing, Calendar1, ChevronLeft, ClockAlert, Pin, TableProperties, UserPen, UsersRound } from "lucide-svelte";
   import { goto } from "$app/navigation";
-  import { capitalize, id2 } from "$lib/func";
+  import { id2 } from "$lib/func";
   import { deleteSubOverview, insertSubOverview } from "$lib/db/db-sub-overview";
   import { deleteSubReminder, insertSubReminder } from "$lib/db/db-sub-reminder";
   import { deleteSubAlarm, insertSubAlarm } from "$lib/db/db-sub-alarm";
@@ -20,6 +20,7 @@
 	import type { PageProps } from './$types';
   import { supabase } from "$lib/supabase";
   import { updateUsername } from "$lib/db/db-usernames";
+  import { getGroupName } from "$lib/func";
 
 	let { data }: PageProps = $props();
 
@@ -36,17 +37,22 @@
   let showUpdateCheckboxSuccess = $state(false);
 
   let user_id = $derived(page.params.user_id ?? '');
-  let username = $derived(usernames.map.get(user_id) ?? '** ERR **');
+  let username = $derived.by(() => {
+    if (!user_id){
+      return '** ERR **';
+    }
+    const u = usernames.map.get(user_id);
+    if (!u){
+      return '** ERR **/2';
+    }
+    return u;
+  });
 
   $effect(() => {
-    if (!usernames.map.has(user_id)) {
+    if (!user_id || !usernames.map.has(user_id)) {
       goto('/mng-users');
     }
   });
-
-  const getGroupName = (group_id: string) => {
-    return capitalize(groups.map.get(group_id) ?? '** ERROR **');
-  };
 
   const submitEmail = async (e : Event) => {
     disabled = true;
@@ -285,11 +291,11 @@
 
   </div>
 
-  {#each groups.map as [group_id, group_name], i}
+  {#each groups.map.keys() as group_id, i}
 
     <fieldset class="fieldset bg-base-100 border-base-300 rounded-box border p-4">
       <legend class="fieldset-legend text-lg">
-        Groep {capitalize(getGroupName(group_id))}
+        Groep {getGroupName(group_id)}
       </legend>
 
       <label class="label text-lg text-wrap inline-flex">
@@ -299,6 +305,7 @@
           onchange={() => toggleUsersGroups(group_id)}
         />
         <span>
+          <UsersRound class="inline-block" />
           <b>Lid van deze groep</b>
         </span>
       </label>
@@ -310,6 +317,7 @@
           onchange={() => toggleSubOverview(group_id)}
         />
         <span>
+          <Calendar1 class="inline-block" />
           <b>Overzicht</b>
           Email notificatie
         </span>
@@ -322,6 +330,7 @@
           onchange={() => toggleSubReminder(group_id)}
         />
         <span>
+          <Pin class="inline-block" />
           <b>Herinnering</b>
           Email notificatie
         </span>
@@ -334,18 +343,8 @@
           onchange={() => toggleSubAlarm(group_id)}
         />
         <span>
+          <BellRing class="inline-block" />
           <b>Alarm</b> Email notificatie
-        </span>
-      </label>
-
-      <label class="label text-lg text-wrap inline-flex">
-        <input type="checkbox" {disabled}
-          checked={roleTasks.set.has(id2(group_id, user_id))}
-          class="checkbox checkbox-xl"
-          onchange={() => toggleRoleTasks(group_id)}
-        />
-        <span>
-          <b>Taken Beheer</b>
         </span>
       </label>
 
@@ -356,7 +355,20 @@
           onchange={() => toggleRoleSchedules(group_id)}
         />
         <span>
-          <b>Schema Taken Beheer</b>
+          <TableProperties class="inline-block" />
+          <b>Schema Beheer</b>
+        </span>
+      </label>
+
+      <label class="label text-lg text-wrap inline-flex">
+        <input type="checkbox" {disabled}
+          checked={roleTasks.set.has(id2(group_id, user_id))}
+          class="checkbox checkbox-xl"
+          onchange={() => toggleRoleTasks(group_id)}
+        />
+        <span>
+          <ClockAlert class="inline-block" />
+          <b>Taken Beheer</b>
         </span>
       </label>
     </fieldset>

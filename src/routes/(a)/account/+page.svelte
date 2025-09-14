@@ -2,13 +2,9 @@
   import { groups } from "$lib/stores/groups.svelte";
   import { usernames } from "$lib/stores/usernames.svelte";
   import { usersGroups } from "$lib/stores/users-groups.svelte";
-  import { capitalize } from "$lib/func";
   import { CircleUser } from "lucide-svelte";
-    import { user } from "$lib/stores/user.svelte";
-
-  const getGroupName = (group_id: string) => {
-    return capitalize(groups.map.get(group_id) ?? '** ERROR **');
-  };
+  import { user } from "$lib/stores/user.svelte";
+  import { getGroupName } from "$lib/func";
 
 </script>
 

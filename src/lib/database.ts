@@ -39,6 +39,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      config: {
+        Row: {
+          created_at: string
+          data: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          data: string
+          id: string
+        }
+        Update: {
+          created_at?: string
+          data?: string
+          id?: string
+        }
+        Relationships: []
+      }
       email_alarm_sent: {
         Row: {
           created_at: string
@@ -139,7 +157,7 @@ export type Database = {
         }
         Relationships: []
       }
-      role_manage_schedules: {
+      role_schedules: {
         Row: {
           created_at: string
           group_id: string
@@ -165,7 +183,7 @@ export type Database = {
           },
         ]
       }
-      role_manage_tasks: {
+      role_tasks: {
         Row: {
           created_at: string
           group_id: string
@@ -191,7 +209,7 @@ export type Database = {
           },
         ]
       }
-      role_manage_users: {
+      role_users: {
         Row: {
           created_at: string
           user_id: string
@@ -288,7 +306,6 @@ export type Database = {
         Row: {
           created_at: string
           day_of_week: number
-          description: string
           group_id: string
           id: string
           max_users: number | null
@@ -299,7 +316,6 @@ export type Database = {
         Insert: {
           created_at?: string
           day_of_week: number
-          description: string
           group_id: string
           id?: string
           max_users?: number | null
@@ -310,7 +326,6 @@ export type Database = {
         Update: {
           created_at?: string
           day_of_week?: number
-          description?: string
           group_id?: string
           id?: string
           max_users?: number | null

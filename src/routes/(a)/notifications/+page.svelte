@@ -1,6 +1,5 @@
 <script lang="ts">
   import { usersGroups } from "$lib/stores/users-groups.svelte";
-  import { groups } from "$lib/stores/groups.svelte";
   import { capitalize } from "$lib/func";
   import { id2 } from "$lib/func";
   import { subOverview } from "$lib/stores/sub-overview.svelte";
@@ -12,33 +11,14 @@
   import { deleteSubReminder } from "$lib/db/db-sub-reminder";
   import { insertSubAlarm } from "$lib/db/db-sub-alarm";
   import { deleteSubAlarm } from "$lib/db/db-sub-alarm";
-  import { Bell } from "lucide-svelte";
-    import { user } from "$lib/stores/user.svelte";
-
-  const getGroupName = (group_id: string) => {
-    return groups.map.get(group_id) ?? '** ERROR **';
-  };
+  import { Bell, BellRing, Calendar1, Pin } from "lucide-svelte";
+  import { user } from "$lib/stores/user.svelte";
+  import { getGroupName } from "$lib/func";
+    import { groups } from "$lib/stores/groups.svelte";
 
   let overviewDis = $state(false);
   let reminderDis = $state(false);
   let alarmDis = $state(false);
-
-  /*
-  $effect(() => {
-    console.log('**Overview**', subOverview);
-    disabled = false;
-  });
-
-  $effect(() => {
-    console.log('**Reminder**', subReminder);
-    disabled = false;
-  });
-
-  $effect(() => {
-    console.log('**Alarm**', subAlarm);
-    disabled = false;
-  });
-  */
 
   const toggleSubOverview = async (group_id: string) => {
     if (!user.id){
@@ -105,7 +85,7 @@
 
       <fieldset class="fieldset bg-base-100 border-base-300 rounded-box border p-4">
         <legend class="fieldset-legend text-lg">
-          Groep {capitalize(getGroupName(group_id))}
+          Groep {getGroupName(group_id)}
         </legend>
 
         <label
@@ -120,8 +100,9 @@
             onchange={() => toggleSubOverview(group_id)}
           />
           <span>
+            <Calendar1 class="inline-block" />
             <b>Overzicht</b> van
-            {getGroupName(group_id)}-taken
+            {groups.map.get(group_id)}-taken
             elke zondagmiddag
             voor de komende week.
           </span>
@@ -135,8 +116,9 @@
             onchange={() => toggleSubReminder(group_id)}
           />
           <span>
+            <Pin class="inline-block" />
             <b>Herinnering</b> als je de volgende
-            dag een {getGroupName(group_id)}-taak hebt.
+            dag een {groups.map.get(group_id)}-taak hebt.
           </span>
         </label>
 
@@ -148,9 +130,10 @@
             onchange={() => toggleSubAlarm(group_id)}
           />
           <span>
+            <BellRing class="inline-block" />
             <b>Alarm</b>:
             melding als de volgende dag nog
-            een {getGroupName(group_id)}-taak
+            een {groups.map.get(group_id)}-taak
             open staat.
           </span>
         </label>

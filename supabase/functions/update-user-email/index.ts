@@ -30,7 +30,7 @@ Deno.serve(async (req) => {
     } = await supabase.auth.getUser(token);
 
     const { data: isAllowed } = await supabase
-      .from('role_manage_users')
+      .from('role_users')
       .select('user_id')
       .eq('user_id', caller?.id)
       .maybeSingle();

@@ -1,14 +1,10 @@
 <script lang="ts">
   import { usernames } from "$lib/stores/usernames.svelte";
-  import { groups } from "$lib/stores/groups.svelte";
   import { usersGroups } from "$lib/stores/users-groups.svelte";
-  import { capitalize } from "$lib/func";
   import { UserCheck, UserPen, Users } from "lucide-svelte";
   import { goto } from "$app/navigation";
+  import { getGroupName } from "$lib/func";
 
-  const getGroupName = (group_id: string) => {
-    return capitalize(groups.map.get(group_id) ?? '** ERROR **');
-  };
 </script>
 
 <div class="p-4">

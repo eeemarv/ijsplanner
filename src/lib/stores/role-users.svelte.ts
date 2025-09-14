@@ -11,7 +11,7 @@ export const loadRoleUsers = async () => {
   roleUsers.set.clear();
 
   const { data, error } = await supabase
-    .from('role_manage_users')
+    .from('role_users')
     .select('user_id');
 
   if (error) {
@@ -24,18 +24,18 @@ export const loadRoleUsers = async () => {
 };
 
 const subscribeRoleUsers = () => {
-  ch = supabase.channel('role-manage-users')
+  ch = supabase.channel('role-users')
   .on('postgres_changes',
-    { event: 'DELETE', schema: 'public', table: 'role_manage_users' },
+    { event: 'DELETE', schema: 'public', table: 'role_users' },
     (payload) => {
-      console.log('-- delete role-manage-users', payload);
+      console.log('-- delete role-users', payload);
       const user_id = payload.old.user_id;
       roleUsers.set.delete(user_id);
     }
   ).on('postgres_changes',
-    { event: 'INSERT', schema: 'public', table: 'role_manage_users' },
+    { event: 'INSERT', schema: 'public', table: 'role_users' },
     (payload) => {
-      console.log('-- insert role-manage-users', payload);
+      console.log('-- insert role-users', payload);
       const user_id = payload.new.user_id;
       roleUsers.set.add(user_id);
     }

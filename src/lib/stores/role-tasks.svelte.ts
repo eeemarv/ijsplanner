@@ -12,7 +12,7 @@ export const loadRoleTasks = async () => {
   roleTasks.set.clear();
 
   const { data, error } = await supabase
-    .from('role_manage_tasks')
+    .from('role_tasks')
     .select('group_id, user_id');
 
   if (error) {
@@ -25,19 +25,19 @@ export const loadRoleTasks = async () => {
 };
 
 const subscribeRoleTasks = () => {
-  ch = supabase.channel('role-manage-tasks')
+  ch = supabase.channel('role-tasks')
   .on('postgres_changes',
-    { event: 'DELETE', schema: 'public', table: 'role_manage_tasks' },
+    { event: 'DELETE', schema: 'public', table: 'role_tasks' },
     (payload) => {
-      console.log('-- delete role-manage-tasks', payload);
+      console.log('-- delete role-tasks', payload);
       const group_id = payload.old.group_id;
       const user_id = payload.old.user_id;
       roleTasks.set.delete(id2(group_id, user_id));
     }
   ).on('postgres_changes',
-    { event: 'INSERT', schema: 'public', table: 'role_manage_tasks' },
+    { event: 'INSERT', schema: 'public', table: 'role_tasks' },
     (payload) => {
-      console.log('-- insert role-manage-tasks', payload);
+      console.log('-- insert role-tasks', payload);
       const group_id = payload.new.group_id;
       const user_id = payload.new.user_id;
       roleTasks.set.add(id2(group_id, user_id));

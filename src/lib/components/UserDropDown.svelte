@@ -1,9 +1,42 @@
 <script lang="ts">
   import { page } from "$app/state";
+  import { id2 } from "$lib/func";
+  import { groups } from "$lib/stores/groups.svelte";
+  import { roleSchedules } from "$lib/stores/role-schedules.svelte";
+  import { roleTasks } from "$lib/stores/role-tasks.svelte";
   import { roleUsers } from "$lib/stores/role-users.svelte";
   import { logout, user } from "$lib/stores/user.svelte";
   import { usernames } from "$lib/stores/usernames.svelte";
-  import { Bell, CircleUser, LogOut, User, Users } from "lucide-svelte";
+  import { usersGroups } from "$lib/stores/users-groups.svelte";
+  import { Bell, CalendarDays, CircleUser, LogOut, TableProperties, User, Users } from "lucide-svelte";
+
+  let roleUsersEn = $derived(user.id && roleUsers.set.has(user.id));
+
+  let roleSchedulesEn = $derived(groups.map.keys().find((group_id) => {
+    if (!user.id){
+      return false;
+    }
+    if (!usersGroups.set.has(id2(group_id, user.id))){
+      return false;
+    }
+    if (user.id && roleSchedules.set.has(id2(group_id, user.id))){
+      return true;
+    }
+    return false;
+  }));
+
+  let roleTasksEn = $derived(groups.map.keys().find((group_id) => {
+    if (!user.id){
+      return false;
+    }
+    if (!usersGroups.set.has(id2(group_id, user.id))){
+      return false;
+    }
+    if (user.id && roleTasks.set.has(id2(group_id, user.id))){
+      return true;
+    }
+    return false;
+  }));
 
 </script>
 
@@ -15,7 +48,7 @@
     {/if}
   </label>
   <ul tabindex="-1" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52" id="theme_dropdown">
-    {#if user.id && roleUsers.set.has(user.id)}
+    {#if roleUsersEn}
       <li>
         <a href="/mng-users"
           class:menu-active={page.url.pathname === '/mng-users'}
@@ -25,7 +58,26 @@
         </a>
       </li>
     {/if}
-
+    {#if roleSchedulesEn}
+      <li>
+        <a href="/mng-schedules"
+          class:menu-active={page.url.pathname === '/mng-schedules'}
+        >
+          <TableProperties />
+          Schema Beheer
+        </a>
+      </li>
+    {/if}
+    {#if roleTasksEn}
+      <li>
+        <a href="/mng-tasks"
+          class:menu-active={page.url.pathname === '/mng-tasks'}
+        >
+          <CalendarDays />
+          Taken Beheer
+        </a>
+      </li>
+    {/if}
     <li>
       <a href="/notifications"
         class:menu-active={page.url.pathname === '/notifications'}

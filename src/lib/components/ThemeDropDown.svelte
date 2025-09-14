@@ -22,7 +22,7 @@
   <label tabindex="-1" class="btn m-1" for="theme_dropdown" title="Vormgeving">
     <Palette size="30" strokeWidth="2" />
   </label>
-  <ul tabindex="-1" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52" id="theme_dropdown">
+  <ul tabindex="-1" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-100 overflow-y-auto max-h-60" id="theme_dropdown">
     {#each themes as t}
       <li
         class:font-bold={$theme === t}

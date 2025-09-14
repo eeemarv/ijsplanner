@@ -3,24 +3,33 @@
   import { goto } from "$app/navigation";
   import { ChevronLeft, Plus, UserCheck } from "lucide-svelte";
 
-  let disabled = false;
-  let email = '';
-  let username = '';
-  let successMsg = '';
-  let errorMsg = '';
+  let disabled = $state(false);
+  let email = $state('');
+  let username = $state('');
+  let successMsg = $state('');
+  let errorMsg = $state('');
 
   const addUser = async (e: Event) => {
     e.preventDefault();
     disabled = true;
     console.log('ADD USER ');
-    const res = await supabase.functions.invoke('add-user', {
+    const { data, error } = await supabase.functions.invoke('add-user', {
       body: { email, username }
     });
+    disabled = false;
 
-    console.log('RES');
-    console.log(res);
+    if (error){
+      errorMsg = `${error}`;
+      return;
+    }
 
-//    message = data.error ? data.error.message : `User ${username} created!`;
+    setTimeout(() => {
+      successMsg = '';
+    }, 4000);
+    successMsg = `Gebruiker ${username} met email ${email} toegevoegd.`;
+    username = '';
+    email = '';
+    console.log('user_id', data.user_id);
   }
 </script>
 

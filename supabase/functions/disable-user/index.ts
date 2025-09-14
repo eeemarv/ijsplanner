@@ -34,9 +34,9 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 })
     }
 
-    // Check if this user is in role_manage_users
+    // Check if this user is in role_users
     const { data: role } = await supabaseUser
-      .from('role_manage_users')
+      .from('role_users')
       .select('user_id')
       .eq('user_id', user.id)
       .maybeSingle()
