@@ -1,13 +1,13 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import { getGroupName, getTimeStr, id2, weekDayNames } from "$lib/func";
+  import { getGroupName, id2 } from "$lib/func";
   import { groups } from "$lib/stores/groups.svelte";
   import { roleSchedules } from "$lib/stores/role-schedules.svelte";
-  import { schedules, type Schedule } from "$lib/stores/schedules.svelte";
+  import { schedules } from "$lib/stores/schedules.svelte";
   import { user } from "$lib/stores/user.svelte";
   import { usersGroups } from "$lib/stores/users-groups.svelte";
   import { CalendarCog, CalendarPlus, TableProperties, Trash, Trash2, Users, Users2, UsersRound, X } from "lucide-svelte";
-    import ScheduleData from "./ScheduleData.svelte";
+  import ScheduleData from "./ScheduleData.svelte";
 
   let sGroups = $derived([...groups.map.keys().filter((group_id) => {
     if (!user.id){
@@ -82,7 +82,7 @@
                 </button>
               </td>
               <td class="border">
-                <ScheduleData {s} />
+                <ScheduleData {schedule_id} />
               </td>
             </tr>
           {/if}

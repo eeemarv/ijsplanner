@@ -7,7 +7,23 @@
 @plugin '@tailwindcss/forms';
 
 @plugin '@tailwindcss/typography';
+
 @plugin "daisyui" {
-  /* Docs: https://daisyui.com/docs/themes/ */
   themes: all;
 }
+
+/*
+
+@plugin 'flowbite/plugin';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@source "../node_modules/flowbite-svelte/dist";
+@source "../node_modules/flowbite-svelte-icons/dist";
+
+@layer base {
+
+  input[type="search"]::-webkit-search-cancel-button {
+    display: none;
+  }
+}/* disable chrome cancel button */

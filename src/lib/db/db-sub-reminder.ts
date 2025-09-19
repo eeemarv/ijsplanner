@@ -1,6 +1,14 @@
 import { supabase } from "$lib/supabase";
 
-export const insertSubReminder = async (group_id:string, user_id:string) => {
+type SubReminder = {
+  group_id: string,
+  user_id: string
+};
+
+export const insertSubReminder = async (v: SubReminder) => {
+  const group_id = v.group_id;
+  const user_id = v.user_id;
+
   const { error } = await supabase
     .from('sub_reminder')
     .insert({group_id, user_id});
@@ -10,7 +18,10 @@ export const insertSubReminder = async (group_id:string, user_id:string) => {
   }
 };
 
-export const deleteSubReminder = async (group_id: string, user_id: string) => {
+export const deleteSubReminder = async (v: SubReminder) => {
+  const group_id = v.group_id;
+  const user_id = v.user_id;
+
   const { error } = await supabase
     .from('sub_reminder')
     .delete()

@@ -68,12 +68,12 @@
             <legend class="fieldset-legend text-lg">
               Email
             </legend>
-              <input type="email"
-                {disabled}
-                bind:value={email}
-                class="input input-bordered invalid:border-error invalid:text-error w-full"
-                required
-              />
+            <input type="email"
+              {disabled}
+              bind:value={email}
+              class="input input-bordered invalid:border-error invalid:text-error w-full"
+              required
+            />
           </fieldset>
           <fieldset class="fieldset bg-base-100 border-base-300 rounded-box border">
             <legend class="fieldset-legend text-lg">

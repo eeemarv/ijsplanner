@@ -1,6 +1,14 @@
 import { supabase } from "$lib/supabase";
 
-export const insertSubAlarm = async (group_id:string, user_id:string) => {
+type SubAlarm = {
+  group_id: string,
+  user_id: string
+};
+
+export const insertSubAlarm = async (v: SubAlarm) => {
+  const group_id = v.group_id;
+  const user_id = v.user_id;
+
   const { error } = await supabase
     .from('sub_alarm')
     .insert({group_id, user_id});
@@ -10,7 +18,10 @@ export const insertSubAlarm = async (group_id:string, user_id:string) => {
   }
 };
 
-export const deleteSubAlarm = async (group_id: string, user_id: string) => {
+export const deleteSubAlarm = async (v: SubAlarm) => {
+  const group_id = v.group_id;
+  const user_id = v.user_id;
+
   const { error } = await supabase
     .from('sub_alarm')
     .delete()

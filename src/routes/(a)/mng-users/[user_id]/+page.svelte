@@ -50,7 +50,7 @@
 
   $effect(() => {
     if (!user_id || !usernames.map.has(user_id)) {
-      goto('/mng-users');
+      goto('/');
     }
   });
 
@@ -82,7 +82,7 @@
     disabled = true;
     e.preventDefault();
     try {
-      await updateUsername(user_id, username);
+      await updateUsername({user_id, username});
       setTimeout(() => {
         showUpdateUsernameSuccess = false;
       }, 500);
@@ -98,7 +98,7 @@
     disabled = true;
     if (usersGroups.set.has(id2(group_id, user_id))){
       try {
-        await deleteUsersGroups(group_id, user_id);
+        await deleteUsersGroups({group_id, user_id});
       } catch (err) {
         console.log(err);
       } finally {
@@ -107,7 +107,7 @@
       return;
     }
     try {
-      await insertUsersGroups(group_id, user_id);
+      await insertUsersGroups({group_id, user_id});
     } catch (err) {
       console.log(err);
     } finally {
@@ -119,7 +119,7 @@
     disabled = true;
     if (roleTasks.set.has(id2(group_id, user_id))){
       try {
-        await deleteRoleTasks(group_id, user_id);
+        await deleteRoleTasks({group_id, user_id});
       } catch (err) {
         console.log(err);
       } finally {
@@ -128,7 +128,7 @@
       return;
     }
     try {
-      await insertRoleTasks(group_id, user_id);
+      await insertRoleTasks({group_id, user_id});
     } catch (err) {
       console.log(err);
     } finally {
@@ -140,7 +140,7 @@
     disabled = true;
     if (roleSchedules.set.has(id2(group_id, user_id))){
       try {
-        await deleteRoleSchedules(group_id, user_id);
+        await deleteRoleSchedules({group_id, user_id});
       } catch (err) {
         console.log(err);
       } finally {
@@ -149,7 +149,7 @@
       return;
     }
     try {
-      await insertRoleSchedules(group_id, user_id);
+      await insertRoleSchedules({group_id, user_id});
     } catch (err) {
       console.log(err);
     } finally {
@@ -161,7 +161,7 @@
     disabled = true;
     if (subOverview.set.has(id2(group_id, user_id))){
       try {
-        await deleteSubOverview(group_id, user_id);
+        await deleteSubOverview({group_id, user_id});
       } catch (err) {
         console.log(err);
       } finally {
@@ -170,7 +170,7 @@
       return;
     }
     try {
-      await insertSubOverview(group_id, user_id);
+      await insertSubOverview({group_id, user_id});
     } catch (err) {
       console.log(err);
     } finally {
@@ -183,7 +183,7 @@
     disabled = true;
     if (subReminder.set.has(id2(group_id, user_id))){
       try {
-        await deleteSubReminder(group_id, user_id);
+        await deleteSubReminder({group_id, user_id});
       } catch (err) {
         console.log(err);
       } finally {
@@ -192,7 +192,7 @@
       return;
     }
     try {
-      await insertSubReminder(group_id, user_id);
+      await insertSubReminder({group_id, user_id});
     } catch (err) {
       console.log(err);
     } finally {
@@ -204,7 +204,7 @@
     disabled = true;
     if (subAlarm.set.has(id2(group_id, user_id))){
       try {
-        await deleteSubAlarm(group_id, user_id);
+        await deleteSubAlarm({group_id, user_id});
       } catch (err) {
         console.log(err);
       } finally {
@@ -213,7 +213,7 @@
       return;
     }
     try {
-      await insertSubAlarm(group_id, user_id);
+      await insertSubAlarm({group_id, user_id});
     } catch (err) {
       console.log(err);
     } finally {

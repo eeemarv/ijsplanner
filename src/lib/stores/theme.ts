@@ -2,18 +2,21 @@
 import { writable } from "svelte/store";
 
 export type Theme = "light" | "dark" | "cupcake"
-  | "bumblebee"| "emerald" | "corporate"
-  | "synthwave" | "retro" | "cyberpunk"
-  | "valentine" | "halloween" | "garden"
-  | "forest" | "aqua" | "lofi"
-  | "pastel" | "fantasy" | "wireframe"
-  | "black" | "luxury" | "dracula"
-  | "cmyk" | "autumn" | "business"
-  | "acid" | "lemonade" | "night"
-  | "coffee" | "winter" | "dim"
-  | "nord" | "sunset" | "caramellatte"
-  | "abyss" | "silk" | "auto";
+  | "retro" | "valentine" | "halloween"
+  | "luxury" | "dracula"
+  | "sunset" | "caramellatte"
+  | "abyss" | "night"
+  | "black" | "forest" | "auto"
+;
 const defaultTheme: Theme = "auto";
+
+const isDark = {
+  light: false, dark: true, cupcake: false,
+  retro: false, valentine: false, halloween: true,
+  luxury: true, dracula: true, sunset: true,
+  caramellatte: false, abyss: true, night: true,
+  black: true, forest: true
+}
 
 // Detect system preference (only in browser)
 function systemPrefersDark(): boolean {
@@ -43,6 +46,12 @@ theme.subscribe((value) => {
     const applied = resolveTheme(value);
     document.documentElement.setAttribute("data-theme", applied);
     localStorage.setItem("theme", value);
+    // + for flowbite datepicker
+    if (isDark[applied]){
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
   }
 });
 

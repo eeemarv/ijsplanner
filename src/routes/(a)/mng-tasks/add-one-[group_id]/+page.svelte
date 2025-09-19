@@ -1,10 +1,11 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { page } from "$app/state";
+  import { Datepicker } from "flowbite-svelte";
+  import { timeToMinutes } from "$lib/func";
   import { groups } from "$lib/stores/groups.svelte";
   import { CalendarPlus, ChevronLeft } from "lucide-svelte";
-  import { timeToHM, timeToMinutes, weekDayNames } from "$lib/func";
-  import { insertSchedules } from "$lib/db/db-schedules";
+  import { insertTasks } from "$lib/db/db-tasks";
 
   const times: string[] = [];
   for (let h = 0; h < 24; h++) {
@@ -13,17 +14,18 @@
     }
   }
 
-  let disabled = $state(false);
-  let errorMessage = $state('');
-  let successMessage = $state('');
+  const schedule_id = null;
+  let comment = $state<string|null>(null);
+  let min_users = $state<number|null>(null);
+  let max_users = $state<number|null>(null);
+  let group_id = $derived(page.params.group_id ?? '');
 
   let startTime = $state('');
   let endTime = $state('');
-  let dayOfWeek = $state(0);
-  let minSubs = $state<number | null>(null);
-  let maxSubs = $state<number | null>(null);
 
-  let group_id = $derived(page.params.group_id ?? '');
+  let disabled = $state(false);
+  let errorMessage = $state('');
+  let successMessage = $state('');
 
   let startMinutes = $derived(startTime ? timeToMinutes(startTime) : null);
   let endMinutes = $derived(endTime ? timeToMinutes(endTime) : null);
@@ -35,61 +37,75 @@
     return null;
   });
 
-  let errorSubs = $derived.by(() => {
-    if (!minSubs || !maxSubs) return null;
-    if (minSubs > maxSubs) return 'Minimum kan niet groter zijn dan maximum';
+  let errorUsers = $derived.by(() => {
+    if (!min_users || !max_users) return null;
+    if (min_users > max_users) return 'Minimum kan niet groter zijn dan maximum';
     return null;
   });
 
+  let tDate = $state<Date|undefined>(undefined);
+
   const submit = async (e: Event) => {
     e.preventDefault();
+    if (!tDate){
+      return;
+    }
+    if (!startTime){
+      return;
+    }
+    if (!endTime){
+      return;
+    }
     disabled = true;
-    const {hours: hours_start, minutes: minutes_start}
-      = timeToHM(startTime);
-    const {hours: hours_end, minutes: minutes_end}
-      = timeToHM(endTime);
+
+    const y = tDate.getFullYear();
+    const m = (tDate.getMonth() + 1).toString().padStart(2, '0');
+    const d = tDate.getDate().toString().padStart(2, '0');
+    const dStr = y + '-' + m + '-' + d + ' ';
+    const t_start = dStr + startTime;
+    const t_end = dStr + endTime;
+
     try {
-      await insertSchedules({group_id,
-        hours_start, minutes_start,
-        hours_end, minutes_end,
-        min_users:minSubs, max_users: maxSubs,
-        day_of_week: dayOfWeek
+      await insertTasks({schedule_id, group_id,
+        t_start, t_end, min_users, max_users,
+        comment
       });
 
-      dayOfWeek = 0;
+      comment = '';
       startTime = '';
       endTime = '';
-      minSubs = null;
-      maxSubs = null;
-      successMessage = 'Schema toegevoegd';
+      min_users = null;
+      max_users = null;
+      successMessage = 'Taak toegevoegd';
       setTimeout(() => {
         successMessage = '';
-      }, 2000);
+      }, 4000);
+
     } catch (err) {
-      console.log('ERR', err);
+      console.log(err);
       errorMessage = err as string;
     } finally {
       disabled = false;
     }
   };
+
 </script>
+
 
 <div class="p-4">
   <div class="flex items-center justify-between mb-4">
     <h1 class="text-2xl">
       <CalendarPlus class="inline-block" />
-      Toevoegen schema {groups.map.get(group_id)}
+      Taak buiten schema {groups.map.get(group_id)}
     </h1>
     <button
       class="btn btn-info"
-      onclick={() => goto('/mng-schedules')}
+      onclick={() => goto('/mng-tasks')}
     >
       <ChevronLeft />
       Terug
     </button>
   </div>
-
-  <div class="px-4">
 
   {#if errorMessage}
     <div role="alert" class="alert alert-error">
@@ -105,20 +121,21 @@
 
   <form onsubmit={submit}>
 
-    <label class="form-control w-full mb-2">
-      <span class="text-sm">Dag van de week</span>
-      <select
-        bind:value={dayOfWeek}
-        class="block select select-bordered w-full invalid:border-error invalid:text-error"
-        class:input-success={successMessage}
-        {disabled}
-        required
-      >
-        {#each weekDayNames as d, i}
-          <option value={i}>{d}</option>
-        {/each}
-      </select>
-    </label>
+    <div class="mb-4">
+      <label class="form-control w-full">
+        <span class="text-lg">Periode</span>
+        <Datepicker
+          {disabled}
+          required
+          bind:value={tDate}
+          color="pink"
+          classes={{input: "block input input-bordered w-full invalid:border-error invalid:text-error"}}
+          locale="nl-NL"
+          dateFormat={{ weekday: "short", year: "numeric", month: "short", day: "2-digit"}}
+          firstDayOfWeek={1}
+        />
+      </label>
+    </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
       <label class="form-control w-full">
@@ -129,7 +146,7 @@
           bind:value={startTime}
           class="block select select-bordered w-full invalid:border-error invalid:text-error"
           class:select-success={successMessage}
-          class:select-error={errorTime}
+          class:select-error={errorTime || errorMessage}
           {disabled}
           required
         >
@@ -146,7 +163,7 @@
           bind:value={endTime}
           class="block select select-bordered w-full invalid:border-error invalid:text-error"
           class:select-success={successMessage}
-          class:select-error={errorTime}
+          class:select-error={errorTime || errorMessage}
           {disabled}
           required
         >
@@ -169,10 +186,10 @@
           Minimum aantal personen (niet vereist)
         </span>
         <input type="number"
-          bind:value={minSubs}
+          bind:value={min_users}
           class="input input-bordered w-full invalid:border-error invalid:text-error"
           class:input-success={successMessage}
-          class:input-error={errorSubs}
+          class:input-error={errorUsers || errorMessage}
           {disabled}
          />
       </label>
@@ -182,20 +199,36 @@
           Maximum aantal personen (niet vereist)
         </span>
         <input type="number"
-          bind:value={maxSubs}
+          bind:value={max_users}
           class="input input-bordered w-full invalid:border-error invalid:text-error"
           class:input-success={successMessage}
-          class:input-error={errorSubs}
+          class:input-error={errorUsers || errorMessage}
           {disabled}
          />
       </label>
-      {#if errorSubs}
+      {#if errorUsers}
         <span class="text-error text-bold">
-          {errorSubs}
+          {errorUsers}
         </span>
       {/if}
 
     </div>
+
+    <div class="mb-4">
+      <label class="form-control w-full">
+        <span class="text-sm">
+          Commentaar (niet vereist)
+        </span>
+        <input type="text"
+          bind:value={comment}
+          class="input input-bordered w-full invalid:border-error invalid:text-error"
+          class:input-success={successMessage}
+          class:input-error={errorMessage}
+          {disabled}
+         />
+      </label>
+    </div>
+
 
     <button type="submit" class="btn btn-success"
       {disabled}
@@ -203,5 +236,7 @@
       Toevoegen
     </button>
   </form>
-  </div>
+
+  <div class="mb-64"></div>
+
 </div>

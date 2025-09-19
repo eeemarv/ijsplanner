@@ -1,12 +1,14 @@
 <script lang="ts">
-  import { type Schedule } from '$lib/stores/schedules.svelte';
   import { getTimeStr, weekDayNames } from '$lib/func';
   import { UsersRound, X } from 'lucide-svelte';
+  import { schedules } from '$lib/stores/schedules.svelte';
 
-  let { s }:{s:Schedule} = $props();
+  let { schedule_id }:{schedule_id: string} = $props();
 
+  let s = $derived(schedules.map.get(schedule_id));
 </script>
 
+{#if s}
 <div>
   <div>
     <b>{weekDayNames[s.day_of_week]}</b>,
@@ -29,3 +31,4 @@
       {/if}
   </div>
 </div>
+{/if}

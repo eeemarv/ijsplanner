@@ -1,6 +1,14 @@
 import { supabase } from "$lib/supabase";
 
-export const insertRoleTasks = async (group_id:string, user_id:string) => {
+type RoleTasks = {
+  group_id: string,
+  user_id: string
+};
+
+export const insertRoleTasks = async (v: RoleTasks) => {
+  const group_id = v.group_id;
+  const user_id = v.user_id;
+
   const { error } = await supabase
     .from('role_tasks')
     .insert({group_id, user_id});
@@ -10,7 +18,10 @@ export const insertRoleTasks = async (group_id:string, user_id:string) => {
   }
 };
 
-export const deleteRoleTasks = async (group_id: string, user_id: string) => {
+export const deleteRoleTasks = async (v: RoleTasks) => {
+  const group_id = v.group_id;
+  const user_id = v.user_id;
+
   const { error } = await supabase
     .from('role_tasks')
     .delete()

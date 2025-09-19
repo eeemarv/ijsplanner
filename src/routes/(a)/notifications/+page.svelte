@@ -1,6 +1,5 @@
 <script lang="ts">
   import { usersGroups } from "$lib/stores/users-groups.svelte";
-  import { capitalize } from "$lib/func";
   import { id2 } from "$lib/func";
   import { subOverview } from "$lib/stores/sub-overview.svelte";
   import { subReminder } from "$lib/stores/sub-reminder.svelte";
@@ -14,7 +13,7 @@
   import { Bell, BellRing, Calendar1, Pin } from "lucide-svelte";
   import { user } from "$lib/stores/user.svelte";
   import { getGroupName } from "$lib/func";
-    import { groups } from "$lib/stores/groups.svelte";
+  import { groups } from "$lib/stores/groups.svelte";
 
   let overviewDis = $state(false);
   let reminderDis = $state(false);
@@ -26,11 +25,11 @@
     }
     overviewDis = true;
     if (subOverview.set.has(id2(group_id, user.id))){
-      await deleteSubOverview(group_id, user.id);
+      await deleteSubOverview({group_id, user_id: user.id});
       overviewDis = false;
       return;
     }
-    await insertSubOverview(group_id, user.id);
+    await insertSubOverview({group_id, user_id: user.id});
     overviewDis = false;
   };
 
@@ -40,11 +39,11 @@
     }
     reminderDis = true;
     if (subReminder.set.has(id2(group_id, user.id))){
-      await deleteSubReminder(group_id, user.id);
+      await deleteSubReminder({group_id, user_id: user.id});
       reminderDis = false;
       return;
     }
-    await insertSubReminder(group_id, user.id);
+    await insertSubReminder({group_id, user_id: user.id});
     reminderDis = false;
   };
 
@@ -54,11 +53,11 @@
     }
     alarmDis = true;
     if (subAlarm.set.has(id2(group_id, user.id))){
-      await deleteSubAlarm(group_id, user.id);
+      await deleteSubAlarm({group_id, user_id: user.id});
       alarmDis = false
       return;
     }
-    await insertSubAlarm(group_id, user.id);
+    await insertSubAlarm({group_id, user_id: user.id});
     alarmDis = false;
   };
 </script>

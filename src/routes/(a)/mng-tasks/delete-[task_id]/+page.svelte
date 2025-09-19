@@ -4,14 +4,17 @@
   import { groups } from "$lib/stores/groups.svelte";
   import { CalendarPlus, ChevronLeft, X } from "lucide-svelte";
   import { deleteSchedules } from "$lib/db/db-schedules";
-  import ScheduleData from "../ScheduleData.svelte";
   import { schedules } from "$lib/stores/schedules.svelte";
+    import { tasks } from "$lib/stores/tasks.svelte";
+    import { deleteTasks } from "$lib/db/db-tasks";
+    import { getGroupName } from "$lib/func";
+    import TaskData from "../TaskData.svelte";
 
   let disabled = $state(false);
   let errorMessage = $state('');
   let successMessage = $state('');
-  let schedule_id = $derived(page.params.schedule_id ?? '');
-  let s = $derived(schedules.map.get(schedule_id));
+  let task_id = $derived(page.params.task_id ?? '');
+  let t = $derived(tasks.map.get(task_id));
   let confirmType = $state('');
   let errorConfirmType = $state();
 
@@ -26,8 +29,8 @@
     }
     disabled = true;
     try {
-      await deleteSchedules(schedule_id);
-      successMessage = 'Schema verwijderd';
+      await deleteTasks(task_id);
+      successMessage = 'Taak verwijderd';
     } catch (err) {
       console.log('ERR', err);
       errorMessage = err as string;
@@ -41,11 +44,11 @@
   <div class="flex items-center justify-between mb-4">
     <h1 class="text-2xl">
       <CalendarPlus class="inline-block" />
-      Verwijder schema {s ? groups.map.get(s.group_id) : ''}
+      Verwijder Taak {getGroupName(t?.group_id ?? '')}
     </h1>
     <button
       class="btn btn-info"
-      onclick={() => goto('/mng-schedules')}
+      onclick={() => goto('/mng-tasks')}
     >
       <ChevronLeft />
       Terug
@@ -68,7 +71,7 @@
 
   <div class="card border mb-2">
     <div class="card-body">
-      <ScheduleData {schedule_id} />
+      <TaskData {task_id} />
     </div>
   </div>
 

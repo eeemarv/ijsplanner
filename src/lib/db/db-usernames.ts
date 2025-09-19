@@ -1,6 +1,13 @@
 import { supabase } from "$lib/supabase";
 
-export const updateUsername = async (user_id:string, username:string) => {
+type Usernames = {
+  user_id:string,
+  username: string
+}
+
+export const updateUsername = async (v:Usernames) => {
+  const user_id = v.user_id;
+  const username = v.username;
   const { error } = await supabase
     .from('usernames')
     .update({username})

@@ -1,6 +1,14 @@
 import { supabase } from "$lib/supabase";
 
-export const insertUsersGroups = async (group_id:string, user_id:string) => {
+type UsersGroups = {
+  group_id: string,
+  user_id: string
+};
+
+export const insertUsersGroups = async (v: UsersGroups) => {
+  const group_id = v.group_id;
+  const user_id = v.user_id;
+
   const { error } = await supabase
     .from('users_groups')
     .insert({group_id, user_id});
@@ -10,7 +18,10 @@ export const insertUsersGroups = async (group_id:string, user_id:string) => {
   }
 };
 
-export const deleteUsersGroups = async (group_id: string, user_id: string) => {
+export const deleteUsersGroups = async (v: UsersGroups) => {
+  const group_id = v.group_id;
+  const user_id = v.user_id;
+
   const { error } = await supabase
     .from('users_groups')
     .delete()

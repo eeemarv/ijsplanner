@@ -7,6 +7,8 @@ import { clearSchedules, initSchedules } from './schedules.svelte';
 import { clearSubAlarm, initSubAlarm } from './sub-alarm.svelte';
 import { clearSubOverview, initSubOverview } from './sub-overview.svelte';
 import { clearSubReminder, initSubReminder } from './sub-reminder.svelte';
+import { clearTasksUsers, initTasksUsers } from './tasks-users.svelte';
+import { clearTasks, initTasks } from './tasks.svelte';
 import { clearUsernames, initUsernames } from './usernames.svelte';
 import { clearUsersGroups, initUsersGroups } from './users-groups.svelte';
 
@@ -40,6 +42,8 @@ export const initAuth = async () => {
         initUsernames(),
         initUsersGroups(),
         initSchedules(),
+        initTasksUsers(),
+        initTasks(),
       ]).then(() => {
         console.log('-- init data --');
       }).catch((err) => {
@@ -63,6 +67,8 @@ export const initAuth = async () => {
           clearUsernames(),
           clearUsersGroups(),
           clearSchedules(),
+          clearTasksUsers(),
+          clearTasks(),
         ]).then(() => {
           console.log('-- clear data --');
         }).catch((err) => {

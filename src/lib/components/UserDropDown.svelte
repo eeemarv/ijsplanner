@@ -40,12 +40,16 @@
 
 </script>
 
+{#if user.id}
+
 <div class="dropdown dropdown-end">
   <label tabindex="-1" class="btn m-1" for="theme_dropdown" title="Vormgeving">
     <User size="30" strokeWidth="2" />
-    {#if user.id && usernames.map.has(user.id)}
-      { usernames.map.get(user.id) }
-    {/if}
+    <span class="hidden sm:inline">
+      {#if user.id && usernames.map.has(user.id)}
+        { usernames.map.get(user.id) }
+      {/if}
+    </span>
   </label>
   <ul tabindex="-1" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52" id="theme_dropdown">
     {#if roleUsersEn}
@@ -102,3 +106,5 @@
     </li>
   </ul>
 </div>
+
+{/if}
