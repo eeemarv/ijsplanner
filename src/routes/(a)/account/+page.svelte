@@ -4,15 +4,25 @@
   import { usersGroups } from "$lib/stores/users-groups.svelte";
   import { CircleUser } from "lucide-svelte";
   import { user } from "$lib/stores/user.svelte";
-  import { getGroupName } from "$lib/func";
+  import { getGroupName, id2 } from "$lib/func";
+    import BackToTasksBtn from "$lib/components/BackToTasksBtn.svelte";
+
+  let uGrps = $derived([...groups.map.keys()].filter((group_id) => {
+    return user.id && usersGroups.set.has(id2(group_id, user.id));
+  }));
+  let rowspan = $derived(uGrps.length ? uGrps.length : 1);
 
 </script>
 
 <div class="p-4">
-  <h1 class="text-2xl mb-2">
-     <CircleUser class="inline-block" />
-     Account Instellingen
-  </h1>
+  <div class="flex items-center justify-between mb-4">
+    <h1 class="text-2xl mb-2">
+      <CircleUser class="inline-block" />
+      Account Instellingen
+    </h1>
+    <BackToTasksBtn />
+  </div>
+
   <p class="mb-3">
     Je account instellingen kunnen enkel
     door een admin aangepast worden
@@ -33,14 +43,14 @@
             <td class="border">{user.email}</td>
           </tr>
 
-          {#if !usersGroups.map.has(user.id) || (usersGroups.map.get(user.id)?.size ?? 0) < 2}
+          {#if uGrps.length < 2}
             <tr>
               <th class="border w-0 whitespace-nowrap">
                 Groep
               </th>
               <td class="border">
-                {#if usersGroups.map.has(user.id)}
-                  {getGroupName([...usersGroups.map.get(user.id) ?? []][0])}
+                {#if uGrps}
+                  {getGroupName(uGrps[0])}
                 {:else}
                   <span class="badge badge-warning">
                     Geen lid van een groep
@@ -51,16 +61,16 @@
           {:else}
             <tr>
               <th
-                rowspan="{usersGroups.map.get(user.id)?.size ?? 1}"
+                {rowspan}
                 class="border w-0 whitespace-nowrap"
               >
                 Groepen
               </th>
               <td class="border">
-                {getGroupName([...usersGroups.map.get(user.id) ?? []][0])}
+                {getGroupName(uGrps[0])}
               </td>
             </tr>
-            {#each [...usersGroups.map.get(user.id)?.values() ?? []] as group_id,i}
+            {#each uGrps as group_id,i}
               {#if i}
                 <tr>
                   <td class="border">

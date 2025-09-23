@@ -18,8 +18,10 @@
   <ul tabindex="-1" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-64 overflow-y-auto max-h-50" id="theme_dropdown">
     {#each themes as t}
       <li
-        class:font-bold={$theme === t}
-        class:bg-slate-400={$theme === t}
+        class={{
+          'font-bold': $theme === t,
+          'bg-slate-400': $theme === t
+        }}
       >
         <button onclick={() => $theme = t} >
           {t}

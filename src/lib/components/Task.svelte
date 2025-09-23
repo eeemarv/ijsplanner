@@ -14,9 +14,11 @@
 </script>
 
 {#snippet uBadge(t: Task)}
-<div class="badge"
-  class:badge-error={!complete}
-  class:badge-success={complete}
+<div class={{
+    'badge': true,
+    'badge-error': !complete,
+    'badge-success': complete
+  }}
 >
   {#if atMax}
     <Circle />
@@ -62,20 +64,32 @@
 
 {#snippet usersList()}
   {#each userIds as user_id,i}
+    {@const isUserSelf = user?.id && user.id === user_id}
     <div
-      class:badge={user?.id && user.id === user_id}
-      class:badge-outline={user?.id && user.id === user_id}
+      class={{
+        'me-2': true,
+        'badge': isUserSelf,
+        'bg-base-100': isUserSelf,
+        'badge-outline': isUserSelf,
+      }}
     >
       {usernames.map.get(user_id)}
     </div>
   {/each}
 {/snippet}
 
-
 <div
-  class="card border bg-base-300 min-w-[150px] sm:min-w-[200px] my-2"
-  class:border-error={!complete}
-  class:border-success={complete}
+  class={{
+    'card': true,
+    'border-2': true,
+    'min-w-[150px]': true,
+    'bg-green-500/25': complete,
+    'bg-red-500/25': !complete,
+    'sm:min-w-[200px]': true,
+    'my-2': true,
+    'border-error': !complete,
+    'border-success': complete
+  }}
 >
   <div class="card-body p-2">
     {#if t}

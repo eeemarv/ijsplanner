@@ -6,7 +6,7 @@
   import { schedules } from "$lib/stores/schedules.svelte";
   import { user } from "$lib/stores/user.svelte";
   import { usersGroups } from "$lib/stores/users-groups.svelte";
-  import { CalendarCog, CalendarPlus, TableProperties, Trash, Trash2, Users, Users2, UsersRound, X } from "lucide-svelte";
+  import { CalendarCog, CalendarPlus, ChevronLeft, TableProperties, Trash, Trash2, Users, Users2, UsersRound, X } from "lucide-svelte";
   import ScheduleData from "./ScheduleData.svelte";
 
   let sGroups = $derived([...groups.map.keys().filter((group_id) => {
@@ -50,13 +50,22 @@
       <TableProperties class="inline-block" />
       Schema Beheer: {@render groupSel()}
     </h1>
-    <button
-      class="btn btn-success"
-      onclick={() => goto('/mng-schedules/add-'+ selGroupId)}
-    >
-      <CalendarPlus />
-      Voeg toe
-    </button>
+    <div>
+      <button
+        class="btn btn-primary"
+        onclick={() => goto('/tasks')}
+      >
+        <ChevronLeft />
+        Terug
+      </button>
+      <button
+        class="btn btn-success"
+        onclick={() => goto('/mng-schedules/add-'+ selGroupId)}
+      >
+        <CalendarPlus />
+        Voeg toe
+      </button>
+    </div>
   </div>
 
   <div class="overflow-x-auto">

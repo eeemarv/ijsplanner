@@ -14,6 +14,7 @@
   import { user } from "$lib/stores/user.svelte";
   import { getGroupName } from "$lib/func";
   import { groups } from "$lib/stores/groups.svelte";
+    import BackToTasksBtn from "$lib/components/BackToTasksBtn.svelte";
 
   let overviewDis = $state(false);
   let reminderDis = $state(false);
@@ -60,16 +61,23 @@
     await insertSubAlarm({group_id, user_id: user.id});
     alarmDis = false;
   };
+
+  let uGrps = $derived([...groups.map.keys()].filter((group_id) => {
+    return user.id && usersGroups.set.has(id2(group_id, user.id));
+  }));
 </script>
 
 <div class="p-4">
-  <h1 class="text-2xl mb-2">
-    <Bell class="inline-block" />
-    Email Notificaties
-  </h1>
+  <div class="flex items-center justify-between mb-4">
+    <h1 class="text-2xl mb-2">
+      <Bell class="inline-block" />
+      Email Notificaties
+    </h1>
+    <BackToTasksBtn />
+  </div>
 
   {#if user.id}
-    {#if !(usersGroups.map.get(user.id)?.size)}
+    {#if !uGrps.length}
       <div class="card card-border bg-warning text-warning-content">
         <div class="card-body">
           <p class="text-lg">
@@ -80,7 +88,7 @@
       </div>
     {/if}
 
-    {#each [...(usersGroups.map.get(user.id) ?? [])] as group_id, i}
+    {#each uGrps as group_id, i}
 
       <fieldset class="fieldset bg-base-100 border-base-300 rounded-box border p-4">
         <legend class="fieldset-legend text-lg">
@@ -88,14 +96,22 @@
         </legend>
 
         <label
-          class="label text-lg text-wrap inline-flex"
-          class:text-success={false}
+          class={{
+            'label': true,
+            'text-lg': true,
+            'text-wrap': true,
+            'inline-flex': true,
+            'text-success': false,
+          }}
         >
           <input type="checkbox"
             disabled={overviewDis}
             checked={subOverview.set.has(id2(group_id, user.id))}
-            class="checkbox checkbox-xl"
-            class:checkbox-success={false}
+            class={{
+              'checkbox': true,
+              'checkbox-xl': true,
+              'checkbox-success': false,
+            }}
             onchange={() => toggleSubOverview(group_id)}
           />
           <span>
@@ -111,7 +127,11 @@
           <input type="checkbox"
             disabled={reminderDis}
             checked={subReminder.set.has(id2(group_id, user.id))}
-            class="checkbox checkbox-xl"
+            class={{
+              'checkbox': true,
+              'checkbox-xl': true,
+              'checkbox-success': false,
+            }}
             onchange={() => toggleSubReminder(group_id)}
           />
           <span>
@@ -125,7 +145,11 @@
           <input type="checkbox"
             disabled={alarmDis}
             checked={subAlarm.set.has(id2(group_id, user.id))}
-            class="checkbox checkbox-xl"
+            class={{
+              'checkbox': true,
+              'checkbox-xl': true,
+              'checkbox-success': false,
+            }}
             onchange={() => toggleSubAlarm(group_id)}
           />
           <span>

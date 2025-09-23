@@ -34,7 +34,6 @@
 
   let showUpdateEmailSuccess = $state(false);
   let showUpdateUsernameSuccess = $state(false);
-  let showUpdateCheckboxSuccess = $state(false);
 
   let user_id = $derived(page.params.user_id ?? '');
   let username = $derived.by(() => {
@@ -240,9 +239,12 @@
   <div class="px-4">
 
   {#if message}
-    <div role="alert" class="alert"
-      class:alert-success={!isError}
-      class:alert-error={isError}
+    <div role="alert"
+      class={{
+        'alert': true,
+        'alert-success': !isError,
+        'alert-error': isError,
+      }}
     >
       <span>{message}</span>
     </div>
@@ -252,8 +254,16 @@
     <label class="block">
       <span class="text-sm">Email address</span>
       <input type="email" {disabled}
-        class="input input-bordered invalid:border-error invalid:text-error w-full mb-2"
-        class:input-success={showUpdateEmailSuccess}
+        class={{
+          'input': true,
+          'input-bordered': true,
+          'w-full': true,
+          'invalid:border-error': true,
+          'invalid:text-error': true,
+          'mb-2': true,
+          'input-success': showUpdateEmailSuccess,
+          'input-error': false,
+        }}
         bind:value={email}
         required
       />
@@ -275,8 +285,16 @@
       <span class="text-sm">Gebruikersnaam</span>
       <input type="text" {disabled}
         minlength="3"
-        class="input input-bordered invalid:border-error invalid:text-error w-full mb-2"
-        class:input-success={showUpdateUsernameSuccess}
+        class={{
+          'input': true,
+          'input-bordered': true,
+          'w-full': true,
+          'invalid:border-error': true,
+          'invalid:text-error': true,
+          'mb-2': true,
+          'input-success': showUpdateUsernameSuccess,
+          'input-error': false,
+        }}
         bind:value={username}
         required
       />
@@ -287,7 +305,6 @@
       Pas aan
     </button>
   </form>
-
 
   </div>
 
@@ -301,7 +318,11 @@
       <label class="label text-lg text-wrap inline-flex">
         <input type="checkbox" {disabled}
           checked={usersGroups.set.has(id2(group_id, user_id))}
-          class="checkbox checkbox-xl"
+          class={{
+            'checkbox': true,
+            'checkbox-xl': true,
+            'checkbox-success': false,
+          }}
           onchange={() => toggleUsersGroups(group_id)}
         />
         <span>
@@ -313,7 +334,11 @@
       <label class="label text-lg text-wrap inline-flex">
         <input type="checkbox" {disabled}
           checked={subOverview.set.has(id2(group_id, user_id))}
-          class="checkbox checkbox-xl"
+          class={{
+            'checkbox': true,
+            'checkbox-xl': true,
+            'checkbox-success': false,
+          }}
           onchange={() => toggleSubOverview(group_id)}
         />
         <span>
@@ -326,7 +351,11 @@
       <label class="label text-lg text-wrap inline-flex">
         <input type="checkbox" {disabled}
           checked={subReminder.set.has(id2(group_id, user_id))}
-          class="checkbox checkbox-xl"
+          class={{
+            'checkbox': true,
+            'checkbox-xl': true,
+            'checkbox-success': false,
+          }}
           onchange={() => toggleSubReminder(group_id)}
         />
         <span>
@@ -339,7 +368,11 @@
       <label class="label text-lg text-wrap inline-flex">
         <input type="checkbox" {disabled}
           checked={subAlarm.set.has(id2(group_id, user_id))}
-          class="checkbox checkbox-xl"
+          class={{
+            'checkbox': true,
+            'checkbox-xl': true,
+            'checkbox-success': false,
+          }}
           onchange={() => toggleSubAlarm(group_id)}
         />
         <span>
@@ -351,7 +384,11 @@
       <label class="label text-lg text-wrap inline-flex">
         <input type="checkbox" {disabled}
           checked={roleSchedules.set.has(id2(group_id, user_id))}
-          class="checkbox checkbox-xl"
+          class={{
+            'checkbox': true,
+            'checkbox-xl': true,
+            'checkbox-success': false,
+          }}
           onchange={() => toggleRoleSchedules(group_id)}
         />
         <span>
@@ -363,7 +400,11 @@
       <label class="label text-lg text-wrap inline-flex">
         <input type="checkbox" {disabled}
           checked={roleTasks.set.has(id2(group_id, user_id))}
-          class="checkbox checkbox-xl"
+          class={{
+            'checkbox': true,
+            'checkbox-xl': true,
+            'checkbox-success': false,
+          }}
           onchange={() => toggleRoleTasks(group_id)}
         />
         <span>

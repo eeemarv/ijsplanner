@@ -302,6 +302,30 @@ export type Database = {
           },
         ]
       }
+      sync_events: {
+        Row: {
+          created_at: string
+          operation: string
+          payload: Json
+          seq: number
+          table_name: string
+        }
+        Insert: {
+          created_at?: string
+          operation: string
+          payload: Json
+          seq?: number
+          table_name: string
+        }
+        Update: {
+          created_at?: string
+          operation?: string
+          payload?: Json
+          seq?: number
+          table_name?: string
+        }
+        Relationships: []
+      }
       task_schedules: {
         Row: {
           created_at: string

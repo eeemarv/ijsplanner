@@ -17,7 +17,7 @@
     if (error) {
       errorMsg = error.message;
     } else {
-      goto('/t');
+      goto('/tasks');
     }
   }
 </script>

@@ -6,11 +6,13 @@ import { SvelteMap } from 'svelte/reactivity';
 let ch: ReturnType<typeof supabase.channel> | null = null;
 
 export const usersGroups = $state({
-  map: new SvelteMap<string,SvelteSet<string>>(),
+  //map: new SvelteMap<string,SvelteSet<string>>(),
   set: new SvelteSet<string>()
 });
 
 export const loadUsersGroups = async () => {
+  usersGroups.set.clear();
+
   const { data, error } = await supabase
     .from('users_groups')
     .select('user_id, group_id')
@@ -22,12 +24,14 @@ export const loadUsersGroups = async () => {
 
   for (const d of data) {
     usersGroups.set.add(id2(d.group_id, d.user_id));
+    /*
     const s = usersGroups.map.get(d.user_id);
     if (!s){
       usersGroups.map.set(d.user_id, new SvelteSet([d.group_id]));
       continue;
     }
     s.add(d.group_id);
+    */
   }
 };
 
@@ -41,6 +45,7 @@ const subscribeUsersGroups = () => {
       const user_id = payload.old.user_id;
       const group_id = payload.old.group_id;
       usersGroups.set.delete(id2(group_id, user_id));
+      /*
       const s = usersGroups.map.get(user_id);
       if (!s){
         return;
@@ -50,6 +55,7 @@ const subscribeUsersGroups = () => {
         return;
       }
       usersGroups.map.delete(user_id);
+      */
     }
   ).on(
     'postgres_changes',
@@ -59,12 +65,14 @@ const subscribeUsersGroups = () => {
       const user_id = payload.new.user_id;
       const group_id = payload.new.group_id;
       usersGroups.set.add(id2(group_id, user_id));
+      /*
       const s = usersGroups.map.get(user_id);
       if (!s){
         usersGroups.map.set(user_id, new SvelteSet([group_id]));
         return;
       }
       s.add(group_id);
+      */
     }
   ).subscribe();
 };
@@ -82,5 +90,5 @@ export const clearUsersGroups = async () => {
     ch = null;
   }
   usersGroups.set.clear();
-  usersGroups.map.clear();
+  //usersGroups.map.clear();
 };

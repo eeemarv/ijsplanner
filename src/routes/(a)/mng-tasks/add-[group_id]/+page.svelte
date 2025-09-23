@@ -127,8 +127,15 @@
         <span class="text-lg">Schema</span>
         <select
           bind:value={schedule_id}
-          class="block select select-bordered w-full invalid:border-error invalid:text-error"
-          class:input-success={successMessage}
+          class={{
+            'block': true,
+            'select': true,
+            'select-bordered': true,
+            'w-full': true,
+            'invalid:border-error': true,
+            'invalid:text-error': true,
+            'select-success': successMessage,
+          }}
           {disabled}
           required
         >

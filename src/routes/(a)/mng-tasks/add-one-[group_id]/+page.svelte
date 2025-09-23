@@ -144,9 +144,16 @@
         </span>
         <select
           bind:value={startTime}
-          class="block select select-bordered w-full invalid:border-error invalid:text-error"
-          class:select-success={successMessage}
-          class:select-error={errorTime || errorMessage}
+          class={{
+            'block': true,
+            'select': true,
+            'select-bordered': true,
+            'w-full': true,
+            'invalid:border-error': true,
+            'invalid:text-error': true,
+            'select-success': successMessage,
+            'select-error': errorTime || errorMessage
+          }}
           {disabled}
           required
         >
@@ -161,9 +168,16 @@
         <span class="text-sm">Eind uur:minuten</span>
         <select
           bind:value={endTime}
-          class="block select select-bordered w-full invalid:border-error invalid:text-error"
-          class:select-success={successMessage}
-          class:select-error={errorTime || errorMessage}
+          class={{
+            'block': true,
+            'select': true,
+            'select-bordered': true,
+            'w-full': true,
+            'invalid:border-error': true,
+            'invalid:text-error': true,
+            'select-success': successMessage,
+            'select-error': errorTime || errorMessage
+          }}
           {disabled}
           required
         >
@@ -187,9 +201,15 @@
         </span>
         <input type="number"
           bind:value={min_users}
-          class="input input-bordered w-full invalid:border-error invalid:text-error"
-          class:input-success={successMessage}
-          class:input-error={errorUsers || errorMessage}
+          class={{
+            'input': true,
+            'input-bordered': true,
+            'w-full': true,
+            'invalid:border-error': true,
+            'invalid:text-error': true,
+            'input-success': successMessage,
+            'input-error': errorUsers || errorMessage,
+          }}
           {disabled}
          />
       </label>
@@ -200,9 +220,15 @@
         </span>
         <input type="number"
           bind:value={max_users}
-          class="input input-bordered w-full invalid:border-error invalid:text-error"
-          class:input-success={successMessage}
-          class:input-error={errorUsers || errorMessage}
+          class={{
+            'input': true,
+            'input-bordered': true,
+            'w-full': true,
+            'invalid:border-error': true,
+            'invalid:text-error': true,
+            'input-success': successMessage,
+            'input-error': errorUsers || errorMessage,
+          }}
           {disabled}
          />
       </label>
@@ -221,9 +247,15 @@
         </span>
         <input type="text"
           bind:value={comment}
-          class="input input-bordered w-full invalid:border-error invalid:text-error"
-          class:input-success={successMessage}
-          class:input-error={errorMessage}
+          class={{
+            'input': true,
+            'input-bordered': true,
+            'w-full': true,
+            'invalid:border-error': true,
+            'invalid:text-error': true,
+            'input-success': successMessage,
+            'input-error': errorMessage,
+          }}
           {disabled}
          />
       </label>

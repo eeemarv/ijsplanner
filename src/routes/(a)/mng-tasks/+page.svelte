@@ -1,13 +1,17 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import Task from "$lib/components/Task.svelte";
-  import { dateToJulian, getGroupName, id2 } from "$lib/func";
+  import { dateToJulian, getGroupName, id2, weekDayNames } from "$lib/func";
   import { groups } from "$lib/stores/groups.svelte";
   import { roleTasks } from "$lib/stores/role-tasks.svelte";
   import { groupsJDays, groupsJDaysTasks, jDays } from "$lib/stores/tasks.svelte";
   import { user } from "$lib/stores/user.svelte";
   import { usersGroups } from "$lib/stores/users-groups.svelte";
-  import { CalendarDays, CalendarPlus, Pencil, Play, Plus, Trash2 } from "lucide-svelte";
+  import { CalendarDays, CalendarPlus, ChevronLeft, Funnel, Pencil, Play, Plus, Trash2 } from "lucide-svelte";
+
+  type Filter = 0 | 1 | 2 | 3 | 4 | 5 | 6 | null;
+
+  let filter = $state<Filter>(null);
 
   let sGroups = $derived([...groups.map.keys().filter((group_id) => {
     if (!user.id){
@@ -39,7 +43,19 @@
   updateJdTres();
 
   let selGroupId = $derived(sGroups[0]);
-  let days = $derived([...groupsJDays.map.get(selGroupId) ?? []].filter((j) => j >= jdTres));
+
+  let days = $derived.by(() => {
+    const ds = [...groupsJDays.map.get(selGroupId) ?? []].filter((j) => j >= jdTres);
+    if (filter === null){
+      return ds;
+    }
+
+    if ([...Array(7).keys()].includes(filter)){
+      return ds.filter((jd) => (jd % 7) === filter);
+    }
+
+    return [];
+  });
 
 </script>
 
@@ -60,6 +76,49 @@
 </div>
 {/snippet}
 
+{#snippet filterDropdown()}
+<div class="dropdown dropdown-start">
+  <label
+    tabindex="-1"
+    class={{
+      'btn': true,
+      'm-1': true,
+      'text-xl': true,
+      'btn-primary': filter !== null
+    }}
+    for="theme_dropdown" title="Filter"
+  >
+    <Funnel />
+  </label>
+  <ul tabindex="-1" class="dropdown-content menu w-40 p-2 shadow bg-base-100 rounded-box" id="filter_dropdown">
+    <li>
+      <button onclick={() => filter = null}
+        class={{
+          'menu': true,
+          'w-full': true,
+          'menu-active': filter === null
+        }}
+        >
+        <i>Geen filter</i>
+      </button>
+    </li>
+    {#each weekDayNames as wk, i}
+    <li>
+      <button onclick={() => {filter = i as Filter}}
+        class={{
+          'menu': true,
+          'w-full': true,
+          'menu-active': filter === i
+        }}
+      >
+        {wk}
+      </button>
+    </li>
+    {/each}
+  </ul>
+</div>
+{/snippet}
+
 {#if user.id}
 
 <div class="p-4">
@@ -67,15 +126,24 @@
     <h1 class="text-2xl">
       <CalendarDays class="inline-block" />
       Taken Beheer {@render groupSel()}
+      {@render filterDropdown()}
     </h1>
-
-    <button
-      class="btn btn-success"
-      onclick={() => goto('/mng-tasks/add-' + selGroupId)}
-    >
-      <CalendarPlus />
-      Voeg toe
-    </button>
+    <div>
+      <button
+        class="btn btn-primary"
+        onclick={() => goto('/tasks')}
+      >
+        <ChevronLeft />
+        Terug
+      </button>
+      <button
+        class="btn btn-success"
+        onclick={() => goto('/mng-tasks/add-' + selGroupId)}
+      >
+        <CalendarPlus />
+        Voeg toe
+      </button>
+    </div>
   </div>
 
   {#each days as jd, index}
@@ -90,8 +158,13 @@
         <div class="divider my-0"></div>
       {/if}
 
-    <div class="px-2 py-1"
-      class:bg-base-200={[2,5,6].includes(dow)}
+    <div
+      class={{
+        'px-2': true,
+        'py-1': true,
+        'bg-amber-500/10': [1,3].includes(dow),
+        'bg-violet-500/10': [5,6].includes(dow)
+      }}
     >
       <h2 class="text-lg font-semibold">
         {#if jd === jdTres}

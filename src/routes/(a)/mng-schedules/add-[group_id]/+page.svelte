@@ -109,8 +109,15 @@
       <span class="text-sm">Dag van de week</span>
       <select
         bind:value={dayOfWeek}
-        class="block select select-bordered w-full invalid:border-error invalid:text-error"
-        class:input-success={successMessage}
+        class={{
+          'block': true,
+          'select': true,
+          'select-bordered': true,
+          'w-full': true,
+          'invalid:border-error': true,
+          'invalid:text-error': true,
+          'select-success': successMessage
+        }}
         {disabled}
         required
       >
@@ -127,9 +134,16 @@
         </span>
         <select
           bind:value={startTime}
-          class="block select select-bordered w-full invalid:border-error invalid:text-error"
-          class:select-success={successMessage}
-          class:select-error={errorTime}
+          class={{
+            'block': true,
+            'select': true,
+            'select-bordered': true,
+            'w-full': true,
+            'invalid:border-error': true,
+            'invalid:text-error': true,
+            'select-success': successMessage,
+            'select-error': errorTime,
+          }}
           {disabled}
           required
         >
@@ -144,9 +158,16 @@
         <span class="text-sm">Eind uur:minuten</span>
         <select
           bind:value={endTime}
-          class="block select select-bordered w-full invalid:border-error invalid:text-error"
-          class:select-success={successMessage}
-          class:select-error={errorTime}
+          class={{
+            'block': true,
+            'select': true,
+            'select-bordered': true,
+            'w-full': true,
+            'invalid:border-error': true,
+            'invalid:text-error': true,
+            'select-success': successMessage,
+            'select-error': errorTime,
+          }}
           {disabled}
           required
         >
@@ -170,9 +191,15 @@
         </span>
         <input type="number"
           bind:value={minSubs}
-          class="input input-bordered w-full invalid:border-error invalid:text-error"
-          class:input-success={successMessage}
-          class:input-error={errorSubs}
+          class={{
+            'input': true,
+            'input-bordered': true,
+            'w-full': true,
+            'invalid:border-error': true,
+            'invalid:text-error': true,
+            'input-success': successMessage,
+            'input-error': errorSubs,
+          }}
           {disabled}
          />
       </label>
@@ -183,9 +210,15 @@
         </span>
         <input type="number"
           bind:value={maxSubs}
-          class="input input-bordered w-full invalid:border-error invalid:text-error"
-          class:input-success={successMessage}
-          class:input-error={errorSubs}
+          class={{
+            'input': true,
+            'input-bordered': true,
+            'w-full': true,
+            'invalid:border-error': true,
+            'invalid:text-error': true,
+            'input-success': successMessage,
+            'input-error': errorSubs,
+          }}
           {disabled}
          />
       </label>

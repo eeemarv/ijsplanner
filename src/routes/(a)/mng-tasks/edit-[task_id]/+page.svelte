@@ -103,9 +103,15 @@
         </span>
         <input type="text"
           bind:value={comment}
-          class="input input-bordered w-full invalid:border-error invalid:text-error"
-          class:input-success={successMessage}
-          class:input-error={errorSubs}
+          class={{
+            'input': true,
+            'input-bordered': true,
+            'w-full': true,
+            'invalid:border-error': true,
+            'invalid:text-error': true,
+            'input-success': successMessage,
+            'input-error': errorMessage,
+          }}
           {disabled}
          />
       </label>
@@ -118,9 +124,15 @@
         </span>
         <input type="number"
           bind:value={min_users}
-          class="input input-bordered w-full invalid:border-error invalid:text-error"
-          class:input-success={successMessage}
-          class:input-error={errorSubs}
+          class={{
+            'input': true,
+            'input-bordered': true,
+            'w-full': true,
+            'invalid:border-error': true,
+            'invalid:text-error': true,
+            'input-success': successMessage,
+            'input-error': errorSubs || errorMessage,
+          }}
           {disabled}
          />
       </label>
@@ -131,9 +143,15 @@
         </span>
         <input type="number"
           bind:value={max_users}
-          class="input input-bordered w-full invalid:border-error invalid:text-error"
-          class:input-success={successMessage}
-          class:input-error={errorSubs}
+          class={{
+            'input': true,
+            'input-bordered': true,
+            'w-full': true,
+            'invalid:border-error': true,
+            'invalid:text-error': true,
+            'input-success': successMessage,
+            'input-error': errorSubs || errorMessage,
+          }}
           {disabled}
          />
       </label>

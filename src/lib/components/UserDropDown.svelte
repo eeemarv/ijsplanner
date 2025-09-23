@@ -5,7 +5,7 @@
   import { roleSchedules } from "$lib/stores/role-schedules.svelte";
   import { roleTasks } from "$lib/stores/role-tasks.svelte";
   import { roleUsers } from "$lib/stores/role-users.svelte";
-  import { logout, user } from "$lib/stores/user.svelte";
+  import { logout, user, userStatus } from "$lib/stores/user.svelte";
   import { usernames } from "$lib/stores/usernames.svelte";
   import { usersGroups } from "$lib/stores/users-groups.svelte";
   import { Bell, CalendarDays, CircleUser, LogOut, TableProperties, User, Users } from "lucide-svelte";
@@ -40,22 +40,24 @@
 
 </script>
 
-{#if user.id}
+{#if userStatus()}
 
 <div class="dropdown dropdown-end">
-  <label tabindex="-1" class="btn m-1" for="theme_dropdown" title="Vormgeving">
+  <label tabindex="-1" class="btn m-1" for="user_dropdown">
     <User size="30" strokeWidth="2" />
-    <span class="hidden sm:inline">
+    <span >
       {#if user.id && usernames.map.has(user.id)}
         { usernames.map.get(user.id) }
       {/if}
     </span>
   </label>
-  <ul tabindex="-1" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52" id="theme_dropdown">
+  <ul tabindex="-1" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52" id="user_dropdown">
     {#if roleUsersEn}
       <li>
         <a href="/mng-users"
-          class:menu-active={page.url.pathname === '/mng-users'}
+          class={{
+            'menu-active': page.url.pathname === '/mng-users'
+          }}
         >
           <Users />
           Gebruikersbeheer
@@ -65,7 +67,9 @@
     {#if roleSchedulesEn}
       <li>
         <a href="/mng-schedules"
-          class:menu-active={page.url.pathname === '/mng-schedules'}
+          class={{
+            'menu-active': page.url.pathname === '/mng-schedules'
+          }}
         >
           <TableProperties />
           Schema Beheer
@@ -75,7 +79,9 @@
     {#if roleTasksEn}
       <li>
         <a href="/mng-tasks"
-          class:menu-active={page.url.pathname === '/mng-tasks'}
+          class={{
+            'menu-active': page.url.pathname === '/mng-tasks'
+          }}
         >
           <CalendarDays />
           Taken Beheer
@@ -84,7 +90,9 @@
     {/if}
     <li>
       <a href="/notifications"
-        class:menu-active={page.url.pathname === '/notifications'}
+        class={{
+          'menu-active': page.url.pathname === '/notifications'
+        }}
       >
         <Bell />
         Email Notificaties
@@ -92,7 +100,9 @@
     </li>
     <li>
       <a href="/account"
-        class:menu-active={page.url.pathname === '/account'}
+        class={{
+          'menu-active': page.url.pathname === '/account'
+        }}
       >
         <CircleUser />
         Account Instellingen

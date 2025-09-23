@@ -2,6 +2,7 @@ import type { Database } from '$lib/database';
 import { timeToHM } from '$lib/func';
 import { supabase } from '$lib/supabase';
 import { SvelteMap } from 'svelte/reactivity';
+import type { SyncEvent } from './sync-events.svelte';
 
 type ScheduleRow = Database['public']['Tables']['task_schedules']['Row'];
 
@@ -15,8 +16,6 @@ export type Schedule = {
   hours_end: number
   minutes_end: number
 };
-
-let ch: ReturnType<typeof supabase.channel> | null = null;
 
 export const schedules = $state({
   map: new SvelteMap<string, Schedule>(),
@@ -58,28 +57,10 @@ export const loadSchedules = async () => {
   }
 };
 
-const subscribeSchedules = () => {
-  ch = supabase.channel('task-schedules')
-  .on('postgres_changes',
-    { event: '*', schema: 'public', table: 'task_schedules' },
-    (payload) => {
-      console.log('-- change schedules, reload', payload);
-      loadSchedules();
-    }
-  ).subscribe();
-};
-
-export const initSchedules = async () => {
-  await loadSchedules();
-  if (!ch){
-    subscribeSchedules();
-  }
+export const applyToSchedules = (evt: SyncEvent) => {
+  loadSchedules();
 };
 
 export const clearSchedules = async () => {
-  if (ch){
-    supabase.removeChannel(ch);
-    ch = null;
-  }
   schedules.map.clear();
 };

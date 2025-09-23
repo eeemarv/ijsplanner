@@ -1,9 +1,10 @@
 <script lang="ts">
   import { usernames } from "$lib/stores/usernames.svelte";
   import { usersGroups } from "$lib/stores/users-groups.svelte";
-  import { UserCheck, UserPen, Users } from "lucide-svelte";
+  import { ChevronLeft, UserCheck, UserPen, Users } from "lucide-svelte";
   import { goto } from "$app/navigation";
-  import { getGroupName } from "$lib/func";
+  import { getGroupName, id2 } from "$lib/func";
+  import { groups } from "$lib/stores/groups.svelte";
 
 </script>
 
@@ -13,22 +14,36 @@
       <Users class="inline-block" />
       Gebruikersbeheer
     </h1>
-    <button
-      class="btn btn-success"
-      onclick={() => goto('/mng-users/add')}
-    >
-      <UserCheck />
-      Voeg toe
-    </button>
+    <div>
+      <button
+        class="btn btn-primary"
+        onclick={() => goto('/tasks')}
+      >
+        <ChevronLeft />
+        Terug
+      </button>
+
+      <button
+        class="btn btn-success"
+        onclick={() => goto('/mng-users/add')}
+      >
+        <UserCheck />
+        Voeg toe
+      </button>
+    </div>
   </div>
 
   <div class="overflow-x-auto">
     <table class="table table-auto table-zebra border border-neutral-content">
       <tbody>
         {#each usernames.map as [user_id, username], i}
+          {@const uGrps = [...groups.map.keys()].filter((group_id) => {
+            return usersGroups.set.has(id2(group_id, user_id));
+          })}
+          {@const rowspan = uGrps.length ? uGrps.length : 1}
           <tr>
             <td class="border w-10 px-4"
-              rowspan={usersGroups.map.get(user_id)?.size ?? 1}
+              {rowspan}
             >
               <button
                 class="btn btn-primary btn-sm"
@@ -39,21 +54,21 @@
             </td>
             <th
               class="border w-20 whitespace-nowrap"
-              rowspan={usersGroups.map.get(user_id)?.size ?? 1}
+              {rowspan}
             >
               {username}
             </th>
             <td class="border">
-              {#if !usersGroups.map.has(user_id) }
+              {#if !uGrps.length }
                 <span class="badge badge-warning">
                   Geen lid van een groep
                 </span>
               {:else}
-                {getGroupName([...(usersGroups.map.get(user_id) ?? [])][0])}
+                {getGroupName(uGrps[0])}
               {/if}
             </td>
           </tr>
-          {#each [...(usersGroups.map.get(user_id) ?? [])] as group_id, i}
+          {#each uGrps as group_id, i}
             {#if i}
               <tr>
                 <td class="border">

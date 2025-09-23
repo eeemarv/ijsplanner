@@ -83,9 +83,15 @@
       </span>
       <input type="text"
         bind:value={confirmType}
-        class="input input-bordered w-full invalid:border-error invalid:text-error"
-        class:input-success={successMessage}
-        class:input-error={errorConfirmType}
+        class={{
+          'input': true,
+          'input-bordered': true,
+          'w-full': true,
+          'invalid:border-error': true,
+          'invalid:text-error': true,
+          'input-success': successMessage,
+          'input-error': errorConfirmType,
+        }}
         {disabled}
         />
       {#if errorConfirmType}

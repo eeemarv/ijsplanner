@@ -2,6 +2,7 @@ import type { Database } from '$lib/database';
 import { dateStrToJulian, dateToISOWeek, dateToJulian, id2, julianToDate } from '$lib/func';
 import { supabase } from '$lib/supabase';
 import { SvelteMap, SvelteSet } from 'svelte/reactivity';
+import type { SyncEvent } from './sync-events.svelte';
 
 type TaskRow = Database['public']['Tables']['tasks']['Row'];
 
@@ -151,6 +152,49 @@ export const loadTasks = async () => {
     setTask(d);
   }
 };
+
+export const applyToTasks = (evt: SyncEvent) => {
+  const p = evt.payload;
+  if (!p.id){
+    const err = 'id missing from payload';
+    console.error(err);
+    throw err;
+  }
+  if (evt.table_name !== 'tasks'){
+    const err = 'table_name should be tasks';
+    console.error(err);
+    throw err;
+  }
+  if (evt.operation === 'DELETE'){
+    const t = tasks.map.get(p.id);
+    if (t){
+      const jd = dateStrToJulian(t.t_start);
+      const tset = groupsJDaysTasks.map.get(id2(t.group_id, jd.toString()));
+      if (tset){
+        tset.delete(p.id);
+      }
+    }
+    tasks.map.delete(p.id);
+    return;
+  }
+  if (evt.operation === 'INSERT'){
+    if (new Date(p.t_start).getTime() < getCutoff().getTime()) {
+      console.log('-- insert ignored, t_start too old');
+      return;
+    }
+    setTask(p as TaskRow);
+    return;
+  }
+  // only the comment, min_users, max_users can be updated
+  const t = tasks.map.get(p.id);
+  if (!t){
+    return;
+  }
+
+  t.comment = p.comment;
+  t.min_users = p.min_users;
+  t.max_users = p.max_users;
+}
 
 const subscribeTasks = () => {
   ch = supabase.channel('tasks')
