@@ -83,15 +83,19 @@
     'card': true,
     'border-2': true,
     'min-w-[150px]': true,
-    'bg-green-500/25': complete,
-    'bg-red-500/25': !complete,
+    'bg-base-100': true,
     'sm:min-w-[200px]': true,
     'my-2': true,
     'border-error': !complete,
     'border-success': complete
   }}
 >
-  <div class="card-body p-2">
+  <div class={{
+    'bg-green-500/25': complete,
+    'bg-red-500/25': !complete,
+    'card-body': true,
+    'p-2': true,
+  }}>
     {#if t}
     <div class="flex justify-between">
       <div>

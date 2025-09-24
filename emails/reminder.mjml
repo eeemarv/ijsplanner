@@ -1,0 +1,48 @@
+<mjml lang="nl">
+  <mj-head>
+    <mj-title>Herinnering {{ task }} taak</mj-title>
+    <mj-attributes>
+      <mj-class name="alert" color="#ff0044" font-weight="bold" font-size="20px" />
+      <mj-class name="date" color="#2200dd" font-weight="bold" font-size="20px" />
+      <mj-class name="date-alert" color="#ff0044" font-weight="bold" font-size="20px" />
+      <mj-class name="task" font-size="18px" font-weight="bold" />
+      <mj-class name="task-alert" color="#ff0044" font-size="18px" font-weight="bold" />
+      <mj-class name="msg" font-size="14px" />
+      <mj-class name="sub" font-size="14px" />
+      <mj-class name="ijsplanner-foot" font-size="18px" align="center" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body>
+    <mj-section>
+      <mj-column>
+        <mj-text mj-class="msg"> Dag Ulrike, </mj-text>
+        <mj-text mj-class="msg"> Ter herinnering, je bent ingeschreven morgen, {{datum}} van {{ uur }} tot {{ uur }} voor een redders taak. </mj-text>
+        <mj-divider />
+        <mj-text> Overzicht morgen </mj-text>
+
+        <mj-text mj-class="date-alert"> Dinsdag 20 november 2025 </mj-text>
+
+        <mj-text mj-class="task"> 11 - 12 uur: Ulrike </mj-text>
+
+        <mj-text mj-class="task-alert"> 12 - 13 uur: --- </mj-text>
+
+        <mj-divider />
+
+        <mj-text mj-class="sub">
+          <a href="https://ijsplanner.be/account"> Uitschrijven </a> van deze herinnerings-emails kan in de instellingen van
+          <a href="https://ijsplanner.be/account"> je account op ijsplanner.be </a>
+        </mj-text>
+
+        <mj-divider />
+
+        <mj-text mj-class="ijsplanner-foot">
+          <a href="https://ijsplanner.be"> IJsplanner.be </a>
+        </mj-text>
+
+        <mj-text align="center">
+          <a href="https://deurnese-ijsberen.be"> Deurnese IJsberen vzw </a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

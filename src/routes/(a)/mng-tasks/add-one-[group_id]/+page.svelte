@@ -123,7 +123,7 @@
 
     <div class="mb-4">
       <label class="form-control w-full">
-        <span class="text-lg">Periode</span>
+        <span class="text-lg">Datum</span>
         <Datepicker
           {disabled}
           required

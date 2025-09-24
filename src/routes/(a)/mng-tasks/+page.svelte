@@ -153,6 +153,9 @@
           <div class="badge badge-outline">
           Week {jDays.map.get(jd)?.week}
           </div>
+          <span>
+            {getGroupName(selGroupId)}
+          </span>
         </div>
       {:else}
         <div class="divider my-0"></div>

@@ -1,11 +1,20 @@
 <script lang="ts">
+
   export let loading = false;
   export let errorMsg = '';
   export let successMsg = '';
   export let title = '';
 </script>
 
-<div class="min-h-screen flex items-center justify-center bg-neutral p-4">
+<div class={{
+  'min-h-screen':true,
+  'flex':true,
+  'items-center':true,
+  'justify-center':true,
+  'bg-slate-500/20':true,
+  'p-4':true,
+}}
+>
   <div class="card w-full max-w-md shadow-xl bg-base-100">
     <div class="card-body">
       <h1 class="card-title justify-center">

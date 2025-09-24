@@ -1,0 +1,57 @@
+<mjml lang="nl">
+  <mj-head>
+    <mj-title>Planning {{REDDERS}}</mj-title>
+    <mj-attributes>
+      <mj-class name="alert" color="#ff0044" font-weight="bold" font-size="20px" />
+      <mj-class name="date" color="#2200dd" font-weight="bold" font-size="20px" />
+      <mj-class name="date-alert" color="#ff0044" font-weight="bold" font-size="20px" />
+      <mj-class name="task" font-size="18px" font-weight="bold" />
+      <mj-class name="task-alert" color="#ff0044" font-size="18px" font-weight="bold" />
+      <mj-class name="ijsplanner-foot" font-size="18px" align="center" />
+      <mj-class name="msg" font-size="14px" />
+      <mj-class name="sub" font-size="14px" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body>
+    <mj-section>
+      <mj-column>
+        <mj-text font-size="22px">Planning REDDERS, week 24</mj-text>
+        <mj-divider />
+        <mj-text mj-class="alert">Nog open taken!</mj-text>
+        <mj-text mj-class="msg">
+          Voor wijzigen en/of aanvullen, ga naar
+          <a href="https://ijsplanner.be"> ijsplanner.be </a>
+        </mj-text>
+
+        <mj-divider />
+
+        <mj-text mj-class="date-alert"> Dinsdag 20 november 2025 </mj-text>
+
+        <mj-text mj-class="task"> 11 - 12 uur: Ulrike</mj-text>
+
+        <mj-text mj-class="task-alert"> 12 - 13 uur: --- </mj-text>
+
+        <mj-divider />
+
+        <mj-text mj-class="sub">
+          Uitschrijven
+          van deze overzichts-emails kan in je
+          <a href="https://ijsplanner.be/notifications">
+          email notificatie instellingen </a> van
+          je account op
+          <a href="https://ijsplanner.be">ijsplanner.be </a>
+        </mj-text>
+
+        <mj-divider />
+
+        <mj-text mj-class="ijsplanner-foot">
+          <a href="https://ijsplanner.be"> IJsplanner.be </a>
+        </mj-text>
+
+        <mj-text align="center">
+          <a href="https://deurnese-ijsberen.be"> Deurnese IJsberen vzw </a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
