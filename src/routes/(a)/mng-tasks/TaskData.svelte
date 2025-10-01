@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getTimeStr, weekDayNames } from '$lib/func';
+  import { getTimeStr } from '$lib/func';
   import { tasks } from '$lib/stores/tasks.svelte';
   import { UsersRound, X } from 'lucide-svelte';
 
@@ -19,7 +19,7 @@
     if (!t){
       return '';
     }
-    return dF.format(new Date(t.t_start + 'Z'));
+    return dF.format(new Date(t.t_start));
   })
 </script>
 

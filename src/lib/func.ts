@@ -56,15 +56,6 @@ export const getTimeStr = (hours: number, minutes: number):string => {
   return hours + 'u' + (minutes ? minutes.toString().padStart(2, '0') : '');
 };
 
-/*
-export const dateToISOWeek = (d: Date) => {
-  const jan = new Date(d.getUTCFullYear(), 0, 1); // January 1st
-  const days = Math.floor((d.getTime() - jan.getTime()) / 86400000);
-  const dow = (jan.getUTCDay() + 6) % 7; // day of the week, monday: 0
-  return Math.floor((days + dow) / 7) + 1;
-};
-*/
-
 export const dateToISOWeek = (d: Date) => {
   var date = new Date(d.getTime());
   date.setHours(0, 0, 0, 0);

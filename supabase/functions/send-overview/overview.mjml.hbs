@@ -1,6 +1,6 @@
 <mjml lang="nl">
   <mj-head>
-    <mj-title>Planning {{REDDERS}}</mj-title>
+    <mj-title>Planning {{capitalize groupName}}</mj-title>
     <mj-attributes>
       <mj-class name="alert" color="#ff0044" font-weight="bold" font-size="20px" />
       <mj-class name="date" color="#2200dd" font-weight="bold" font-size="20px" />
@@ -15,35 +15,43 @@
   <mj-body>
     <mj-section>
       <mj-column>
-        <mj-text font-size="22px">Planning {{REDDERS}}, week {{24}}</mj-text>
+        <mj-text font-size="22px">Planning {{upper groupName}}, week {{week}}</mj-text>
         <mj-divider />
-        <mj-text mj-class="alert">{{Nog open taken!}}</mj-text>
+        {{#unless complete}}
+          <mj-text mj-class="alert">Nog open taken!</mj-text>
+        {{/complete}}
         <mj-text mj-class="msg">
           Voor wijzigen en/of aanvullen, ga naar
           <a href="https://ijsplanner.be"> ijsplanner.be </a>
         </mj-text>
+
+        {{#each days}}
+          <mj-divider />
+          {{#if this.complete}}
+            <mj-text mj-class="date">{{this.dateStr}}</mj-text>
+          {{else}}
+            <mj-text mj-class="date-alert">{{day.dateStr}}</mj-text>
+          {{/if}}
+          {{#each this.tasks}}
+            {{#if this.complete}}
+              <mj-text mj-class="task">
+            {{else}}
+              <mj-text mj-class="task-alert">
+            {{/if}}
+            {{this.timeStr}}
+            {{#if this.comment}}
+              [{{this.comment}}]
+            {{/if}}:
+            {{#each this.usernames}}
+              {{this}}{{#unless @last}},{{/unless}}
+            {{else}}
+              ---
+            {{/each}}
+            ({{this.countStr}})
+            </mj-text>
+          {{/each}}{{!tasks}}
+        {{/days}}{{!days}}
         <mj-divider />
-<mj-text>{{begin}}</mj-text>
-        <mj-text mj-class="date-alert">{{day.dateStr}}Dinsdag 20 november 2025 </mj-text>
-
-        <mj-text mj-class="task"> {{11 - 12 uur}}: {{Ulrike}} ({(1/1)})</mj-text>
-
-        <mj-text mj-class="task-alert"> {{12 - 13 uur}}: {{---}} {{(0/1)}}</mj-text>
-
-        <mj-divider />
-
-<mj-text>{{end}}</mj-text>
-
-<mj-text>{{begin}}</mj-text>
-        <mj-text mj-class="date">{{day.dateStr}}Dinsdag 20 november 2025 </mj-text>
-
-        <mj-text mj-class="task"> {{11 - 12 uur}}: {{Ulrike}} ({(1/1)})</mj-text>
-
-        <mj-text mj-class="task"> {{12 - 13 uur}}: {{Benjamin}} {{(1/1)}}</mj-text>
-
-        <mj-divider />
-
-<mj-text>{{end}}</mj-text>
 
         <mj-text mj-class="sub">
           Uitschrijven

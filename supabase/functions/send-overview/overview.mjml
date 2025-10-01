@@ -23,18 +23,15 @@
           <a href="https://ijsplanner.be"> ijsplanner.be </a>
         </mj-text>
         <mj-divider />
-<mj-text>{{begin}}</mj-text>
+
         <mj-text mj-class="date-alert">{{day.dateStr}}Dinsdag 20 november 2025 </mj-text>
 
-        <mj-text mj-class="task"> {{11 - 12 uur}}: {{Ulrike}} ({(1/1)})</mj-text>
+        <mj-text mj-class="task"> {{11u - 12u}}: {{Ulrike}} ({(1/1)})</mj-text>
 
-        <mj-text mj-class="task-alert"> {{12 - 13 uur}}: {{---}} {{(0/1)}}</mj-text>
+        <mj-text mj-class="task-alert"> {{12u - 13u}}: {{---}} {{(0/1)}}</mj-text>
 
         <mj-divider />
 
-<mj-text>{{end}}</mj-text>
-
-<mj-text>{{begin}}</mj-text>
         <mj-text mj-class="date">{{day.dateStr}}Dinsdag 20 november 2025 </mj-text>
 
         <mj-text mj-class="task"> {{11 - 12 uur}}: {{Ulrike}} ({(1/1)})</mj-text>
@@ -42,8 +39,6 @@
         <mj-text mj-class="task"> {{12 - 13 uur}}: {{Benjamin}} {{(1/1)}}</mj-text>
 
         <mj-divider />
-
-<mj-text>{{end}}</mj-text>
 
         <mj-text mj-class="sub">
           Uitschrijven
