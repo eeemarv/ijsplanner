@@ -11,6 +11,18 @@
   let complete = $derived(userIds.length >= (t?.min_users ?? 1));
   let atMax = $derived(!!t && t.max_users && t.max_users <= userIds.length);
 
+/*
+    'card': true,
+    'border-2': true,
+    'min-w-[150px]': true,
+    'bg-base-100': true,
+    'sm:min-w-[200px]': true,
+    'my-2': true,
+    'border-error': !complete,
+    'border-success': complete
+*/
+
+
 </script>
 
 {#snippet uBadge(t: Task)}
@@ -82,9 +94,10 @@
   class={{
     'card': true,
     'border-2': true,
-    'min-w-[150px]': true,
-    'bg-base-100': true,
+    'w-full': true,
+    'sm:w-auto': true,
     'sm:min-w-[200px]': true,
+    'bg-base-100': true,
     'my-2': true,
     'border-error': !complete,
     'border-success': complete

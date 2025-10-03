@@ -43,9 +43,9 @@
 {#if userStatus()}
 
 <div class="dropdown dropdown-end">
-  <label tabindex="-1" class="btn m-1" for="user_dropdown">
-    <User size="30" strokeWidth="2" />
-    <span >
+  <label tabindex="-1" class="btn btn-sm sm:btn-md" for="user_dropdown">
+    <User class="w-5 h-5 sm:w-6 sm:h-6" />
+    <span class="hidden sm:inline">
       {#if user.id && usernames.map.has(user.id)}
         { usernames.map.get(user.id) }
       {/if}

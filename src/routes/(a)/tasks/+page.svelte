@@ -6,7 +6,7 @@
   import { groupsJDays, groupsJDaysTasks, jDays, tasks } from "$lib/stores/tasks.svelte";
   import { user, userStatus } from "$lib/stores/user.svelte";
   import { usersGroups } from "$lib/stores/users-groups.svelte";
-  import { Funnel, Pencil, Play, Plus, Trash2 } from "lucide-svelte";
+  import { Funnel, Pencil, Play, Plus, Trash2, Users, Users2 } from "lucide-svelte";
   import { onDestroy, onMount } from "svelte";
   import { weekDayNames } from "$lib/func";
   import { tasksUsers } from "$lib/stores/tasks-users.svelte";
@@ -178,8 +178,11 @@
 {#snippet menu()}
 {#if userStatus() && user.id}
   <div class="dropdown dropdown-start">
-    <label tabindex="-1" class="btn m-1 text-xl" for="group_dropdown" title="Groep">
-      {selGroupId ? getGroupName(selGroupId) : '***'}
+    <label tabindex="-1" class="btn btn-sm sm:btn-md" for="group_dropdown" title="Groep">
+      <Users />
+      <span class="hidden sm:inline">
+        {selGroupId ? getGroupName(selGroupId) : '***'}
+      </span>
     </label>
     <ul tabindex="-1" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box text-xl" id="group_dropdown">
       {#each sGroups as group_id}
@@ -203,6 +206,7 @@
       tabindex="-1"
       class={{
         'btn': true,
+        'btn-sm sm:btn-md': true,
         'm-1': true,
         'text-xl': true,
         'btn-primary': filter !== null
@@ -265,12 +269,14 @@
     <button
       class={{
         'btn': true,
+        'btn-sm': true,
+        'sm:btn-md': true,
         'btn-primary': editEn
       }}
       onclick={() => editEn = !editEn}
       title="(de)blokkeer edit"
     >
-      <Pencil />
+      <Pencil class="w-5 h-5 sm:w-6 sm:h-6" />
     </button>
   {/if}
 {/if}
@@ -305,7 +311,7 @@
     >
       <h2 class="text-lg font-semibold">
         {#if jd === jdTres}
-          <Play class="inline-block" />
+          <Play class="inline-block w-5 h-5 sm:w-6 sm:h-6" />
         {/if}
         {jDays.map.get(jd)?.label}
       </h2>
