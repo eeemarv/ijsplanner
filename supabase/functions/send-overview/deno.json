@@ -1,8 +1,8 @@
 {
   "imports": {
     "supabase": "npm:@supabase/supabase-js@2",
-    "brevo": "npm:@getbrevo/brevo",
     "handlebars": "npm:handlebars",
-    "mjml": "npm:mjml"
+    "mjml": "npm:mjml",
+    "mailersend": "npm:mailersend"
   }
 }

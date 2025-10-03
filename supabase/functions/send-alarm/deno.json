@@ -1,3 +1,8 @@
 {
-  "imports": {}
+  "imports": {
+    "supabase": "npm:@supabase/supabase-js@2",
+    "handlebars": "npm:handlebars",
+    "mjml": "npm:mjml",
+    "mailersend": "npm:mailsend"
+  }
 }

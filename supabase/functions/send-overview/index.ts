@@ -2,7 +2,11 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { corsHeaders } from '../_shared/cors.ts';
-import { dateToISOWeek, getTimeStr } from '../_shared/func.ts';
+import Handlebars from 'npm:handlebars';
+import mjml2html from 'npm:mjml';
+import { capitalize, dateToISOWeek, getTimeStr } from '../_shared/func.ts';
+import { MailerSend, EmailParams, Sender, Recipient } from 'npm:mailersend';
+import tpl from './overview.mjml.hbs.ts';
 
 Deno.serve(async (req) => {
   try {
@@ -15,20 +19,17 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
-    const decoder = new TextDecoder('utf-8');
-    const rawTpl = Deno.readFileSync('overview.mjml.hbs');
-    const tpl = decoder.decode(rawTpl);
+    const mailerSend = new MailerSend({
+      apiKey: Deno.env.get('MAILERSEND_API_TOKEN'),
+    });
+    const sentFrom = new Sender("no-reply@ijsplanner.be", "ijsplanner");
+    const bulkEmails = [];
 
-    const now = new Date()
-    const sixHoursLater = new Date(now.getTime() + 6 * 3600_000)
-    const weekLater = new Date(sixHoursLater.getTime() + 7 * 24 * 3600_000)
+    const ctpl = Handlebars.compile(tpl);
 
     const { data, error } = await supabase
-      .from('public.view_overview_with_users')
-      .select('*')
-      .gt('t_start', sixHoursLater.toISOString())
-      .lt('t_start', weekLater.toISOString())
-      .order('t_start', { ascending: true })
+      .from('view_overview')
+      .select('*');
 
     if (error) {
       throw error;
@@ -55,66 +56,90 @@ Deno.serve(async (req) => {
       comment: null|string;
       t_start: string;
       t_end: string;
+      volunteers: string[];
     }
 
     type RTask = {
-      usernames: string[];
+      volunteers: string[];
       complete: boolean;
-      timeStr: string;
-      comment: string;
+      startStr: string;
+      endStr: string;
+      comment: string|null;
       countStr: string;
     };
 
     type DayData = {
-      dayStr: string;
+      dateStr: string;
       complete: boolean;
       tasks: RTask[];
     };
 
     const groupsMap = new Map<string, string>();
+    const groupsRecipientsSet = new Set<string>();
+    const groupsRecipientsMap = new Map<string, typeof Recipient[]>();
     const dayWkMap = new Map<string, number>();
     const grpDayTaskMap = new Map<string, string[]>();
     const tasksMap = new Map<string, Task>();
-    const tasksUsersMap = new Map<string, string[]>();
 
     for (const d of data){
-      groupsMap.set(d.group_id, d.group_name);
-      const dayStr = dF.format(d.t_start);
-      const wk = dateToISOWeek(d.t_start);
-      dayWkMap.set(dayStr, wk);
-      const grpDayId = d.group_id + ':' + dayStr;
-      const tAry = grpDayTaskMap.get(grpDayId);
-      if (!tAry){
-        grpDayTaskMap.set(grpDayId, [d.task_id]);
-      } else {
-        grpDayTaskMap.set(grpDayId, [...tAry, d.task_id]);
-      }
-      const uAry = tasksUsersMap.get(d.task_id);
-      if (!uAry){
-        tasksUsersMap.set(d.task_id, [d.username]);
-      } else {
-        tasksUsersMap.set(d.task_id, [...uAry, d.username]);
-      }
+      const group_id = d.group_id;
+      const group_name = d.group_name;
+      const email = d.email;
+      const username = d.username;
+      const task_id = d.task_id;
       const min_users = d.min_users;
       const max_users = d.max_users;
       const comment = d.comment;
       const t_start = d.t_start;
       const t_end = d.t_end;
-      tasksMap.set(d.task_id, {
-        min_users, max_users, comment, t_start, t_end
+      const volunteers = d.volunteers;
+      if (!groupsMap.has(group_id)){
+        groupsMap.set(group_id, group_name);
+      }
+      const reciId = group_id + ':' + email;
+      if (!groupsRecipientsSet.has(reciId)){
+        const reci = new Recipient(email, username);
+        const rAry = groupsRecipientsMap.get(group_id) ?? [];
+        groupsRecipientsMap.set(group_id, [...rAry, reci]);
+        groupsRecipientsSet.add(reciId);
+      }
+      if (tasksMap.has(task_id)){
+        continue;
+      }
+      const startDate = new Date(t_start + 'Z');
+      const dateStr = dF.format(startDate);
+      const wk = dateToISOWeek(startDate);
+      dayWkMap.set(dateStr, wk);
+      const grpDayId = group_id + ':' + dateStr;
+      const tAry = grpDayTaskMap.get(grpDayId);
+      if (!tAry){
+        grpDayTaskMap.set(grpDayId, [task_id]);
+      } else {
+        grpDayTaskMap.set(grpDayId, [...tAry, task_id]);
+      }
+      tasksMap.set(task_id, {
+        min_users,
+        max_users,
+        comment,
+        t_start,
+        t_end,
+        volunteers
       });
     }
 
     for (const [groupId, groupName] of groupsMap){
+      const groupNameUp = groupName.toUpperCase();
+      const groupNameCap = capitalize(groupName);
       const params = {
         groupName,
+        groupNameUp,
+        groupNameCap,
         week: 0,
         days: <DayData[]>[],
         complete: true,
       };
-
-      for (const [dayStr, wk] of dayWkMap){
-        const grpDayId = groupId + ':' + dayStr;
+      for (const [dateStr, wk] of dayWkMap){
+        const grpDayId = groupId + ':' + dateStr;
         const tAry = grpDayTaskMap.get(grpDayId);
         if (!tAry){
           continue;
@@ -123,7 +148,7 @@ Deno.serve(async (req) => {
           params.week = wk;
         }
         const dayData = <DayData>{
-          dayStr,
+          dateStr,
           complete: true,
           tasks: <RTask[]>[],
         };
@@ -132,52 +157,91 @@ Deno.serve(async (req) => {
           if (!t){
             continue;
           }
-          const usernames = tasksUsersMap.get(taskId) ?? [];
-          const task = <RTask>{
-            usernames,
-            complete: true,
-            timeStr: '',
-            comment: '',
-            countStr: '',
-          };
-          let countStr = usernames.length.toString();
-          if (t.min_users){
-            if (usernames.length < t.min_users){
-              task.complete = false;
+          const volunteers = t.volunteers;
+          const min_users = t.min_users;
+          const max_users = t.max_users;
+          const t_start = t.t_start;
+          const t_end = t.t_end;
+          const comment = t.comment;
+          const complete = volunteers.length >= (min_users ?? 0);
+          let countStr = volunteers.length.toString();
+          if (min_users){
+            if (volunteers.length < min_users){
               dayData.complete = false;
               params.complete = false;
             }
             countStr += '/';
-            countStr += t.min_users.toString();
-            if (t.max_users){
+            countStr += min_users.toString();
+            if (max_users){
               countStr += '->';
-              countStr += t.max_users.toString();
+              countStr += max_users.toString();
             }
-          } else if (t.max_users) {
+          } else if (max_users) {
             countStr += '/->';
-            countStr += t.max_users.toString();
+            countStr += max_users.toString();
           }
-          let timeStr = getTimeStr(t.t_start);
-          timeStr += ' - ';
-          timeStr += getTimeStr(t.t_end);
-          task.timeStr = timeStr;
-          task.countStr = countStr;
+          const task = <RTask>{
+            volunteers,
+            complete,
+            startStr: getTimeStr(t_start),
+            endStr: getTimeStr(t_end),
+            comment,
+            countStr,
+          };
           dayData.tasks.push(task);
         }
         params.days.push(dayData);
       }
 
       if (params.days.length && params.week){
+        const mj = ctpl(params);
+        if (typeof mj !== "string") {
+          throw new Error("Template did not return a string");
+        }
+        const {html, errors} = mjml2html(mj, {
+          keepComments: false,
+          filePath: '',
+        });
+        if (errors.length){
+          throw 'mjml err: ' + errors.join(', ');
+        }
+        const to = groupsRecipientsMap.get(groupId) ?? [];
+        const to_users = [];
+        for (const t of to){
+          const email = t.email;
+          const username = t.name;
+          to_users.push({email, username});
+          const week = params.week;
+          const subject = 'Week ' + week + ' ' + groupNameUp;
+          const emailParams = new EmailParams()
+            .setFrom(sentFrom)
+            .setTo([t])
+            .setSubject(subject)
+            .setHtml(html);
+          bulkEmails.push(emailParams);
+        }
 
+        const { error } = await supabase
+          .from('email_overview_sent')
+          .insert({params,
+            group_id: groupId,
+            to_users
+          });
 
-
+        if (error) {
+          throw error;
+        }
       }
     }
 
-
+    if (bulkEmails.length){
+      await mailerSend.email.sendBulk(bulkEmails);
+    }
 
     return new Response(
-      JSON.stringify({}),
+      JSON.stringify({
+        "message": bulkEmails.length + ' emails sent',
+      }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }}
     );
   } catch (err) {

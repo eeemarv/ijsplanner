@@ -1,6 +1,6 @@
 <mjml lang="nl">
   <mj-head>
-    <mj-title>Herinnering {{ groupName }}-taak</mj-title>
+    <mj-title>Alarm {{ groupName }}</mj-title>
     <mj-attributes>
       <mj-class name="alert" color="#ff0044" font-weight="bold" font-size="20px" />
       <mj-class name="date" color="#2200dd" font-weight="bold" font-size="20px" />
@@ -15,14 +15,15 @@
   <mj-body>
     <mj-section>
       <mj-column>
-        <mj-text mj-class="msg"> Dag {{username}}, </mj-text>
-        <mj-text mj-class="msg"> Ter herinnering, je bent ingeschreven morgen, {{ dateStr }} van {{ timeStart }} tot {{ timeEnd }} voor een {{ groupName }}-taak{{#if comment}} [{{comment}}]{{/if}}. </mj-text>
+        <mj-text mj-class="alert">Alarm!</mj-text>
+        <mj-text mj-class="msg"> Morgen, {{dateStr}} van {{ timeStart }} tot {{ timeEnd }} is een {{groupName}}-taak {{#if comment}}[{{comment}}] {{/if}}nog niet of nog niet compleet ingevuld. </mj-text>
+        <mj-text mj-class="msg">Kan jij helpen?</mj-text>
+
         <mj-divider />
 
         <mj-text mj-class="sub">
-          Uitschrijven van deze herinnerings-emails kan in de "email notificaties"
-          instellingen van
-          je account op <a href="https://ijsplanner.be">ijsplanner.be </a>.
+          Uitschrijven van deze alarm-emails kan in de "email notificaties" instellingen van
+           je account op <a href="https://ijsplanner.be">ijsplanner.be </a>
         </mj-text>
 
         <mj-divider />

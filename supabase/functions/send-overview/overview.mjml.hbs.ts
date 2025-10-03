@@ -1,3 +1,4 @@
+export default `
 <mjml lang="nl">
   <mj-head>
     <mj-title>Planning {{groupNameUp}}</mj-title>
@@ -73,4 +74,4 @@
       </mj-column>
     </mj-section>
   </mj-body>
-</mjml>
+</mjml>`

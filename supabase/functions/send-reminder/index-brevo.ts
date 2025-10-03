@@ -5,8 +5,7 @@ import Handlebars from "npm:handlebars";
 import mjml2html from 'npm:mjml';
 import { corsHeaders } from '../_shared/cors.ts';
 import { capitalize, getTimeStr } from '../_shared/func.ts';
-import tpl from "./alarm.mjml.hbs.ts";
-import { MailerSend, EmailParams, Sender, Recipient } from "npm:mailersend";
+import tpl from "./reminder.mjml.hbs.ts";
 
 Deno.serve(async (req) => {
   try {
@@ -19,21 +18,12 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
-    const mailerSend = new MailerSend({
-      apiKey: Deno.env.get('MAILERSEND_API_TOKEN'),
-    });
-    const sentFrom = new Sender("no-reply@ijsplanner.be", "ijsplanner");
-    const bulkEmails = [];
-
     const ctpl = Handlebars.compile(tpl);
 
     const { data, error } = await supabase
-      .from('view_alarm')
+      .from('view_reminder')
       .select('*')
       .order('t_start', { ascending: true });
-
-    console.log("data", data);
-    console.log("error", error);
 
     if (error) {
       throw error;
@@ -56,56 +46,15 @@ Deno.serve(async (req) => {
       timeZone: "UTC"
     });
 
+    const messageVersions = [];
     const sendAry = [];
-
-    type Task = {
-      groupId: string;
-      groupName: string;
-      groupNameUp: string;
-      groupNameCap: string;
-      comment: string|null;
-      dateStr: string;
-      timeStart: string;
-      timeEnd: string;
-      minUsers: number|null;
-      maxUsers: number|null;
-    };
-
-    type Receiver = {
-      email: string;
-      name: string;
-      user_id: string;
-    };
-
-    const tasksMap = new Map<string, Task>();
-    const tasksReceiversMap = new Map<string, Receiver[]>();
-    const tasksToMap = new Map();
 
     for (const d of data){
       const user_id = d.user_id;
-      if (!user_id){
-        continue;
-      }
-      const name = d.username;
-      const email = d.email;
       const task_id = d.task_id;
-      const recip = new Recipient(email, name);
-      const rcvr = {email, name, user_id};
-      const tm = tasksToMap.get(task_id);
-      if (tm){
-        tasksToMap.set(task_id, [...tm, recip]);
-      } else {
-        tasksToMap.set(task_id, [recip]);
-      }
-      const rc = tasksReceiversMap.get(task_id);
-      if (rc){
-        tasksReceiversMap.set(task_id, [...rc, rcvr]);
-      } else {
-        tasksReceiversMap.set(task_id, [rcvr]);
-      }
-      if (tasksMap.has(task_id)){
-        continue;
-      }
+      const username = d.username;
+      const email = d.email;
+      const comment = d.comment;
       const groupName = <string>d.group_name;
       const groupNameUp = groupName.toUpperCase();
       const groupNameCap = capitalize(groupName);
@@ -113,52 +62,48 @@ Deno.serve(async (req) => {
       const dateStr = dF.format(dStart);
       const timeStart = getTimeStr(d.t_start);
       const timeEnd = getTimeStr(d.t_end);
-      const minUsers = d.min_users ?? null;
-      const maxUsers = d.max_users ?? null;
-      const comment = d.comment ?? null;
-      const task = <Task>{
-        groupName, groupNameCap, groupNameUp,
-        dateStr, timeStart, timeEnd,
-        minUsers, maxUsers, comment
+      const params = {
+        groupName,
+        groupNameUp,
+        groupNameCap,
+        username,
+        dateStr,
+        timeStart,
+        timeEnd,
+        email,
+        comment
       };
-      tasksMap.set(task_id, task);
-    }
-
-    for (const [task_id, params] of tasksMap){
-      const to = tasksToMap.get(task_id);
-      if (!to){
-        continue;
-      }
+      sendAry.push({user_id, task_id, params});
       const mj = ctpl(params);
       if (typeof mj !== "string") {
         throw new Error("Template did not return a string");
       }
+      console.log('mjml', mj);
       const {html, errors} = mjml2html(mj, {
         keepComments: false,
         filePath: '',
       });
+      console.log('html', html);
       if (errors.length){
         throw 'mjml err: ' + errors.join(', ');
       }
-      for (const t of to){
-        const emailParams = new EmailParams()
-          .setFrom(sentFrom)
-          .setTo([t])
-          .setSubject('ALarm ' + params.groupNameUp)
-          .setHtml(html);
-        bulkEmails.push(emailParams);
-      }
-      const receivers = tasksReceiversMap.get(task_id);
-      if (!receivers){
-        throw 'Error: no receivers (logic error)';
-      }
-      sendAry.push({task_id, params, receivers});
+      const mVersion = {
+        to: [{
+          email,
+          name: username
+        }],
+        htmlContent: html,
+        subject: 'Herinnering ' + groupNameUp
+      };
+      messageVersions.push(mVersion);
     }
 
     for (const s of sendAry){
       const { error } = await supabase
-        .from('email_alarm_sent')
+        .from('email_reminder_sent')
         .insert(s);
+
+      console.log('insert err', error);
 
       if (error) {
         throw error;
@@ -174,13 +119,29 @@ Deno.serve(async (req) => {
       );
     }
 
-    if (bulkEmails.length){
-      await mailerSend.email.sendBulk(bulkEmails);
+    const resp = await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: {
+        "accept": "application/json",
+        "api-key": Deno.env.get('BREVO_API_KEY'),
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        sender: { name: "IJsplanner", email: "no-reply@ijsplanner.be" },
+        subject: "Herinnering",
+        htmlContent: "<html><body><p>Herinnering: je hebt morgen een taak.</p></body></html>",
+        messageVersions
+      }),
+    });
+
+    if (!resp.ok) {
+      const errText = await resp.text();
+      throw new Error(`Brevo API error: ${errText}`);
     }
 
     return new Response(
       JSON.stringify({
-        "message": bulkEmails.length + ' emails sent',
+        "message": sendAry.length + ' emails sent',
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }}
     );

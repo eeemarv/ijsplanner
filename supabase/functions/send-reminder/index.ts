@@ -1,12 +1,12 @@
 //
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2';
-//import * as brevo from "npm:@getbrevo/brevo";
 import Handlebars from "npm:handlebars";
 import mjml2html from 'npm:mjml';
 import { corsHeaders } from '../_shared/cors.ts';
 import { capitalize, getTimeStr } from '../_shared/func.ts';
 import tpl from "./reminder.mjml.hbs.ts";
+import { MailerSend, EmailParams, Sender, Recipient } from "npm:mailersend";
 
 Deno.serve(async (req) => {
   try {
@@ -19,13 +19,11 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
-    /*
-    const decoder = new TextDecoder('utf-8');
-    const rawTpl = Deno.readFileSync('./reminder.mjml.hbs');
-    const tpl = decoder.decode(rawTpl);
-    */
-
-    console.log("tpl", tpl.slice(0, 200)); // preview template
+    const mailerSend = new MailerSend({
+      apiKey: Deno.env.get('MAILERSEND_API_TOKEN'),
+    });
+    const sentFrom = new Sender("no-reply@ijsplanner.be", "ijsplanner");
+    const bulkEmails = [];
 
     const ctpl = Handlebars.compile(tpl);
 
@@ -33,9 +31,6 @@ Deno.serve(async (req) => {
       .from('view_reminder')
       .select('*')
       .order('t_start', { ascending: true });
-
-    console.log("data", data);
-    console.log("error", error);
 
     if (error) {
       throw error;
@@ -58,7 +53,6 @@ Deno.serve(async (req) => {
       timeZone: "UTC"
     });
 
-    const messageVersions = [];
     const sendAry = [];
 
     for (const d of data){
@@ -66,6 +60,7 @@ Deno.serve(async (req) => {
       const task_id = d.task_id;
       const username = d.username;
       const email = d.email;
+      const comment = d.comment;
       const groupName = <string>d.group_name;
       const groupNameUp = groupName.toUpperCase();
       const groupNameCap = capitalize(groupName);
@@ -81,10 +76,10 @@ Deno.serve(async (req) => {
         dateStr,
         timeStart,
         timeEnd,
-        email
+        email,
+        comment
       };
       sendAry.push({user_id, task_id, params});
-      console.log('pre hdbs');
       const mj = ctpl(params);
       if (typeof mj !== "string") {
         throw new Error("Template did not return a string");
@@ -98,15 +93,12 @@ Deno.serve(async (req) => {
       if (errors.length){
         throw 'mjml err: ' + errors.join(', ');
       }
-      const mVersion = {
-        to: [{
-          email,
-          name: username
-        }],
-        htmlContent: html,
-        subject: 'Herinnering ' + groupNameUp
-      };
-      messageVersions.push(mVersion);
+      const emailParams = new EmailParams()
+        .setFrom(sentFrom)
+        .setTo([new Recipient(email, username)])
+        .setSubject('Herinnering ' + groupNameUp)
+        .setHtml(html);
+      bulkEmails.push(emailParams);
     }
 
     for (const s of sendAry){
@@ -130,25 +122,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    const resp = await fetch("https://api.brevo.com/v3/smtp/email", {
-      method: "POST",
-      headers: {
-        "accept": "application/json",
-        "api-key": Deno.env.get('BREVO_API_KEY'),
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        sender: { name: "IJsplanner", email: "no-reply@ijsplanner.be" },
-        subject: "Herinnering",
-        htmlContent: "<html><body><p>Herinnering: je hebt morgen een taak.</p></body></html>",
-        messageVersions
-      }),
-    });
-
-    if (!resp.ok) {
-      const errText = await resp.text();
-      throw new Error(`Brevo API error: ${errText}`);
-    }
+    await mailerSend.email.sendBulk(bulkEmails);
 
     return new Response(
       JSON.stringify({

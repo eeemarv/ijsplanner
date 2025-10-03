@@ -6,7 +6,6 @@ import mjml2html from 'npm:mjml';
 import { corsHeaders } from '../_shared/cors.ts';
 import { capitalize, getTimeStr } from '../_shared/func.ts';
 import tpl from "./alarm.mjml.hbs.ts";
-import { MailerSend, EmailParams, Sender, Recipient } from "npm:mailersend";
 
 Deno.serve(async (req) => {
   try {
@@ -18,12 +17,6 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
-
-    const mailerSend = new MailerSend({
-      apiKey: Deno.env.get('MAILERSEND_API_TOKEN'),
-    });
-    const sentFrom = new Sender("no-reply@ijsplanner.be", "ijsplanner");
-    const bulkEmails = [];
 
     const ctpl = Handlebars.compile(tpl);
 
@@ -56,6 +49,7 @@ Deno.serve(async (req) => {
       timeZone: "UTC"
     });
 
+    const messageVersions = [];
     const sendAry = [];
 
     type Task = {
@@ -71,15 +65,19 @@ Deno.serve(async (req) => {
       maxUsers: number|null;
     };
 
-    type Receiver = {
+    type To = {
       email: string;
       name: string;
+    };
+
+    type Receiver = To & {
       user_id: string;
     };
 
     const tasksMap = new Map<string, Task>();
     const tasksReceiversMap = new Map<string, Receiver[]>();
-    const tasksToMap = new Map();
+    const tasksToMap = new Map<string, To[]>();
+    let emailCount = 0;
 
     for (const d of data){
       const user_id = d.user_id;
@@ -89,13 +87,13 @@ Deno.serve(async (req) => {
       const name = d.username;
       const email = d.email;
       const task_id = d.task_id;
-      const recip = new Recipient(email, name);
-      const rcvr = {email, name, user_id};
+      const tob = {email, name};
+      const rcvr = {...tob, user_id};
       const tm = tasksToMap.get(task_id);
       if (tm){
-        tasksToMap.set(task_id, [...tm, recip]);
+        tasksToMap.set(task_id, [...tm, tob]);
       } else {
-        tasksToMap.set(task_id, [recip]);
+        tasksToMap.set(task_id, [tob]);
       }
       const rc = tasksReceiversMap.get(task_id);
       if (rc){
@@ -103,6 +101,7 @@ Deno.serve(async (req) => {
       } else {
         tasksReceiversMap.set(task_id, [rcvr]);
       }
+      emailCount++;
       if (tasksMap.has(task_id)){
         continue;
       }
@@ -140,14 +139,12 @@ Deno.serve(async (req) => {
       if (errors.length){
         throw 'mjml err: ' + errors.join(', ');
       }
-      for (const t of to){
-        const emailParams = new EmailParams()
-          .setFrom(sentFrom)
-          .setTo([t])
-          .setSubject('ALarm ' + params.groupNameUp)
-          .setHtml(html);
-        bulkEmails.push(emailParams);
-      }
+      const mVersion = {
+        to,
+        htmlContent: html,
+        subject: 'Alarm ' + params.groupNameUp
+      };
+      messageVersions.push(mVersion);
       const receivers = tasksReceiversMap.get(task_id);
       if (!receivers){
         throw 'Error: no receivers (logic error)';
@@ -174,13 +171,31 @@ Deno.serve(async (req) => {
       );
     }
 
-    if (bulkEmails.length){
-      await mailerSend.email.sendBulk(bulkEmails);
+    console.log('versions', messageVersions);
+
+    const resp = await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: {
+        "accept": "application/json",
+        "api-key": Deno.env.get('BREVO_API_KEY'),
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        sender: { name: "IJsplanner", email: "no-reply@ijsplanner.be" },
+        subject: "Alarm",
+        htmlContent: "<html><body><p>Alarm: morgen staat nog een taak open.</p></body></html>",
+        messageVersions
+      }),
+    });
+
+    if (!resp.ok) {
+      const errText = await resp.text();
+      throw new Error(`Brevo API error: ${errText}`);
     }
 
     return new Response(
       JSON.stringify({
-        "message": bulkEmails.length + ' emails sent',
+        "message": emailCount + ' emails sent',
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }}
     );

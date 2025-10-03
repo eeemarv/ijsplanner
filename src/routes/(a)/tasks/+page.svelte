@@ -11,7 +11,7 @@
   import { weekDayNames } from "$lib/func";
   import { tasksUsers } from "$lib/stores/tasks-users.svelte";
   import { deleteTasksUsers, insertTasksUsers } from "$lib/db/db-tasks-users";
-    import { SvelteSet } from "svelte/reactivity";
+  import { SvelteSet } from "svelte/reactivity";
 
   type Filter = null | "open_tasks" | "my_tasks" | 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -346,6 +346,5 @@
     </div>
 
   {/each}
-
 </div>
 {/if}

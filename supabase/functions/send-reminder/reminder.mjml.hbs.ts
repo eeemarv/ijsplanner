@@ -17,7 +17,7 @@ export default `
     <mj-section>
       <mj-column>
         <mj-text mj-class="msg"> Dag {{username}}, </mj-text>
-        <mj-text mj-class="msg"> Ter herinnering, je bent ingeschreven morgen, {{ dateStr }}, van {{ timeStart }} tot {{ timeEnd }} voor een {{ groupName }}-taak. </mj-text>
+        <mj-text mj-class="msg"> Ter herinnering, je bent ingeschreven morgen, {{ dateStr }}, van {{ timeStart }} tot {{ timeEnd }} voor een {{ groupName }}-taak{{#if comment}} [{{comment}}]{{/if}}. </mj-text>
         <mj-divider />
 
         <mj-text mj-class="sub">
