@@ -4,10 +4,11 @@
   import { goto } from '$app/navigation';
   import AuthCard from '$lib/components/AuthCard.svelte';
 
-  let password = '';
-  let loading = true;
-  let errorMsg = '';
-  let successMsg = '';
+  let password = $state('');
+  let loading = $state(true);
+  let errorMsg = $state('');
+  let successMsg = $state('');
+  let disabled = $state(false);
 
   onMount(async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -19,11 +20,13 @@
 
   const setPassword = async (e: Event) => {
     e.preventDefault();
+    disabled = true;
     errorMsg = '';
     successMsg = '';
     const { error } = await supabase.auth.updateUser({ password });
     if (error) {
       errorMsg = error.message;
+      disabled = false;
     } else {
       successMsg = 'Paswoord aangepast';
       setTimeout(() => goto('/'), 1200);
@@ -34,8 +37,18 @@
 <AuthCard {errorMsg} {successMsg} {loading} title="Kies een nieuw paswoord">
   {#if !loading && !errorMsg && !successMsg}
     <form class="form-control" onsubmit={setPassword}>
-      <input class="input input-bordered w-full mb-2 placeholeder-info" type="password" placeholder="Nieuw paswoord" bind:value={password} required />
-      <button class="btn btn-primary">
+      <input
+        class="input input-bordered w-full mb-2 placeholeder-info"
+        type="password"
+        placeholder="Nieuw paswoord"
+        bind:value={password}
+        required
+        {disabled}
+      />
+      <button
+        class="btn btn-primary"
+        {disabled}
+      >
         Bewaar paswoord
       </button>
     </form>

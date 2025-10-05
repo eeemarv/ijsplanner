@@ -1,8 +1,6 @@
 import { supabase } from '$lib/supabase';
 import { SvelteMap } from 'svelte/reactivity';
 
-let ch: ReturnType<typeof supabase.channel> | null = null;
-
 export const usernames = $state({
   map: new SvelteMap<string,string>()
 });
@@ -26,43 +24,6 @@ export const loadUsernames = async () => {
   }
 };
 
-const subscribeUsernames = () => {
-  ch = supabase.channel('usernames')
-  .on(
-    'postgres_changes',
-    { event: 'DELETE', schema: 'public', table: 'usernames' },
-    (payload) => {
-      console.log('-- delete usernames', payload);
-      usernames.map.delete(payload.old.user_id);
-    }
-  ).on(
-    'postgres_changes',
-    { event: 'UPDATE', schema: 'public', table: 'usernames' },
-    (payload) => {
-      console.log('-- update usernames', payload);
-      usernames.map.set(payload.new.user_id, payload.new.username);
-    }
-  ).on(
-    'postgres_changes',
-    { event: 'INSERT', schema: 'public', table: 'usernames' },
-    (payload) => {
-      console.log('-- insert usernames', payload);
-      usernames.map.set(payload.new.user_id, payload.new.username);
-    }
-  ).subscribe();
-};
-
-export const initUsernames = async () => {
-  await loadUsernames();
-  if (!ch){
-    subscribeUsernames();
-  }
-};
-
 export const clearUsernames = async () => {
-  if (ch){
-    supabase.removeChannel(ch);
-    ch = null;
-  }
   usernames.map.clear();
 };

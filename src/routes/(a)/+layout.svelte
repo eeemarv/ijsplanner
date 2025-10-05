@@ -3,12 +3,17 @@
   import { user } from "$lib/stores/user.svelte";
   import { config } from "$lib/stores/config.svelte";
 
-  $: if (!user.id) {
-    goto('/');
-  }
+	let { children } = $props();
+
+  $effect(() => {
+    if (!user.id) {
+      goto('/');
+    }
+  });
+
 </script>
 
-<slot />
+{@render children?.()}
 
 {#if config.map.has('footer')}
   <div class="h-20"></div>

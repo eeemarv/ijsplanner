@@ -26,8 +26,6 @@ type DayInfo = {
   day_of_week: number
 };
 
-let ch: ReturnType<typeof supabase.channel> | null = null;
-
 export const tasks = $state({
   map: new SvelteMap<string, Task>()
 });
@@ -196,61 +194,6 @@ export const applyToTasks = (evt: SyncEvent) => {
   t.max_users = p.max_users;
 }
 
-const subscribeTasks = () => {
-  ch = supabase.channel('tasks')
-  .on('postgres_changes',
-    { event: 'DELETE', schema: 'public', table: 'tasks' },
-    (payload) => {
-      console.log('-- delete tasks', payload);
-      const id = payload.old.id;
-      const t = tasks.map.get(id);
-      if (t){
-        const jd = dateStrToJulian(t.t_start);
-        const tset = groupsJDaysTasks.map.get(id2(t.group_id, jd.toString()));
-        if (tset){
-          tset.delete(id);
-        }
-      }
-      tasks.map.delete(id);
-    }
-  ).on('postgres_changes',
-    { event: 'INSERT', schema: 'public', table: 'tasks' },
-    (payload) => {
-      console.log('-- insert tasks', payload);
-      if (new Date(payload.new.t_start).getTime() < getCutoff().getTime()) {
-        console.log('-- insert ignored, t_start too old');
-        return;
-      }
-      setTask(payload.new as TaskRow);
-    }
-  ).on('postgres_changes',
-    { event: 'UPDATE', schema: 'public', table: 'tasks' },
-    (payload) => {
-      console.log('-- update groups', payload);
-      // only the comment, min_users, max_users can be updated
-      const t = tasks.map.get(payload.new.id);
-      if (!t){
-        return;
-      }
-      // ?
-      t.comment = payload.new.comment;
-      t.min_users = payload.new.min_users;
-      t.max_users = payload.new.max_users;
-    }
-  ).subscribe();
-};
-
-export const initTasks = async () => {
-  await loadTasks();
-  if (!ch){
-    subscribeTasks();
-  }
-};
-
 export const clearTasks = async () => {
-  if (ch){
-    supabase.removeChannel(ch);
-    ch = null;
-  }
   tasks.map.clear();
 };
