@@ -29,7 +29,7 @@
   let jdTres = $state(0);
 
   const setJdTres = () => {
-    const d = new Date();
+    const d = new Date(Date.now() + 14_400_000);
     jdTres = dateToJulian(d);
   };
 

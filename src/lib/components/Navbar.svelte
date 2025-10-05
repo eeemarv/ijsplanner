@@ -1,7 +1,7 @@
 <script lang="ts">
   import { navbar } from "$lib/state.svelte";
   import { user } from "$lib/stores/user.svelte";
-    import { usernames } from "$lib/stores/usernames.svelte";
+  import { usernames } from "$lib/stores/usernames.svelte";
   import ThemeDropDown from "./ThemeDropDown.svelte";
   import UserDropDown from "./UserDropDown.svelte";
 
