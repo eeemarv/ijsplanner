@@ -6,6 +6,9 @@
 	let { children } = $props();
 
   $effect(() => {
+    if (!user){
+      return;
+    }
     if (!user.id) {
       goto('/');
     }
