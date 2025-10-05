@@ -55,7 +55,7 @@
       return false;
     }
     return usersGroups.set.has(id2(group_id, user.id));
-  }) ?? '');
+  }) ?? sGroups[0] ?? '');
 
   let days = $derived.by(() => {
     const ds = [...groupsJDays.map.get(selGroupId) ?? []].filter((j) => j >= jdTres);

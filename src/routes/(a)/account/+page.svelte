@@ -49,7 +49,7 @@
                 Groep
               </th>
               <td class="border">
-                {#if uGrps}
+                {#if uGrps.length}
                   {getGroupName(uGrps[0])}
                 {:else}
                   <span class="badge badge-warning">
