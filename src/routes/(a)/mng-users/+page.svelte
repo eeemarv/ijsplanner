@@ -6,6 +6,8 @@
   import { getGroupName, id2 } from "$lib/func";
   import { groups } from "$lib/stores/groups.svelte";
 
+  let users = $derived([...usernames.map].sort((a, b) => a[1].localeCompare(b[1])))
+
 </script>
 
 <div class="p-4">
@@ -36,7 +38,7 @@
   <div class="overflow-x-auto">
     <table class="table table-auto table-zebra border border-neutral-content">
       <tbody>
-        {#each usernames.map as [user_id, username], i}
+        {#each users as [user_id, username], i}
           {@const uGrps = [...groups.map.keys()].filter((group_id) => {
             return usersGroups.set.has(id2(group_id, user_id));
           })}
