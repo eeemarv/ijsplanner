@@ -12,7 +12,7 @@ export default defineConfig({
 		paraglideVitePlugin({
 			project: './project.inlang',
 			outdir: './src/lib/paraglide'
-		})
+		}),
 	],
 	test: {
 		expect: { requireAssertions: true },
