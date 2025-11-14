@@ -14,7 +14,7 @@
     const { data: { session } } = await supabase.auth.getSession();
     loading = false;
     if (!session) {
-      errorMsg = 'Geen sessie data. Open de reset link opnieuw.';
+      errorMsg = 'Geen sessie data.';
     }
   });
 
@@ -54,9 +54,15 @@
     </form>
   {/if}
   {#if errorMsg}
-    <button class="btn btn-outline" onclick={() => errorMsg = ''}>
-      Opnieuw
-    </button>
+    {#if errorMsg.startsWith('Auth') || errorMsg.startsWith('Geen') }
+      <button class="btn btn-outline" onclick={() => goto('/auth/password-reset-request')}>
+        Opnieuw
+      </button>
+    {:else}
+      <button class="btn btn-outline" onclick={() => errorMsg = ''}>
+        Opnieuw
+      </button>
+    {/if}
   {/if}
   {#if successMsg}
     <a class="btn btn-outline" href="/">
