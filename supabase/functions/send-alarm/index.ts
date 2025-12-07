@@ -2,7 +2,9 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import Handlebars from "npm:handlebars";
+//import Handlebars from "npm:handlebars@4/lib/handlebars.js";
 import mjml2html from 'npm:mjml';
+//import mjml2html from "https://esm.sh/mjml@4.14.1";
 import { corsHeaders } from '../_shared/cors.ts';
 import { capitalize, getTimeStr } from '../_shared/func.ts';
 import tpl from "./alarm.mjml.hbs.ts";
