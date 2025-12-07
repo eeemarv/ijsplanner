@@ -17,7 +17,7 @@
     if (error) {
       errorMsg = error.message;
     } else {
-      goto('/tasks');
+      setTimeout(() => goto('/tasks'), 1000);
     }
   }
 </script>
