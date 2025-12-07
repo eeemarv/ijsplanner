@@ -98,6 +98,8 @@ Deno.serve(async (req) => {
         .setTo([new Recipient(email, username)])
         .setSubject('Herinnering ' + groupNameUp)
         .setHtml(html);
+      // replaces bulk send.
+      await mailerSend.email.send(emailParams);
       bulkEmails.push(emailParams);
     }
 
@@ -122,7 +124,9 @@ Deno.serve(async (req) => {
       );
     }
 
+    /*
     await mailerSend.email.sendBulk(bulkEmails);
+    */
 
     return new Response(
       JSON.stringify({

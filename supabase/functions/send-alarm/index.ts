@@ -146,6 +146,8 @@ Deno.serve(async (req) => {
           .setTo([t])
           .setSubject('ALarm ' + params.groupNameUp)
           .setHtml(html);
+        //replaces bulk send
+        await mailerSend.email.send(emailParams);
         bulkEmails.push(emailParams);
       }
       const receivers = tasksReceiversMap.get(task_id);
@@ -174,9 +176,11 @@ Deno.serve(async (req) => {
       );
     }
 
+    /*
     if (bulkEmails.length){
       await mailerSend.email.sendBulk(bulkEmails);
     }
+    */
 
     return new Response(
       JSON.stringify({
