@@ -8,16 +8,41 @@
   let loading = false;
   let errorMsg = '';
 
+  function timeoutPromise<T>(p: Promise<T>, ms = 15000) {
+    let timer: any;
+    return Promise.race([
+      p,
+      new Promise<T>((_, reject) => {
+        timer = setTimeout(() => reject(new Error('timeout')), ms);
+      })
+    ]).finally(() => clearTimeout(timer));
+  }
+
   async function login(e: Event) {
     e.preventDefault();
     loading = true;
     errorMsg = '';
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    loading = false;
-    if (error) {
-      errorMsg = error.message;
-    } else {
-      setTimeout(() => goto('/tasks'), 1000);
+
+    try {
+      const res = await timeoutPromise(
+        supabase.auth.signInWithPassword({ email, password }),
+        15000
+      );
+      const { error } = res as any;
+      if (error) {
+        errorMsg = error.message ?? 'Login failed';
+      } else {
+        goto('/tasks');
+      }
+    } catch (err: any) {
+      console.error('login error', { err, ua: typeof navigator !== 'undefined' ? navigator.userAgent : 'ssr' });
+      if (err?.message === 'timeout') {
+        errorMsg = 'Login timed out — please check your connection and try again.';
+      } else {
+        errorMsg = err?.message ?? 'Login failed — please try again.';
+      }
+    } finally {
+      loading = false;
     }
   }
 </script>
