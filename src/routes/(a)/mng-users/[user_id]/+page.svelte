@@ -24,15 +24,22 @@
 
 	let { data }: PageProps = $props();
 
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   let disabled = $state(false);
   let email = $state(data.email);
+  let initEmail = email;
+  let new_password = $state('');
   //let user_id = $state<string>('');
   let message = $state('');
   let isError = $state(false);
 
   let emailErrorMsg = $state('');
+  let usernameErrorMsg = $state('');
+  let passwordErrorMsg = $state('');
 
   let showUpdateEmailSuccess = $state(false);
+  let showUpdatePasswordSuccess = $state(false);
   let showUpdateUsernameSuccess = $state(false);
 
   let user_id = $derived(page.params.user_id ?? '');
@@ -73,8 +80,9 @@
     }
     setTimeout(() => {
       showUpdateEmailSuccess = false;
-    }, 500);
+    }, 2000);
     showUpdateEmailSuccess = true;
+    initEmail = email;
   };
 
   const submitUsername = async (e : Event) => {
@@ -84,13 +92,42 @@
       await updateUsername({user_id, username});
       setTimeout(() => {
         showUpdateUsernameSuccess = false;
-      }, 500);
+      }, 2000);
       showUpdateUsernameSuccess = true;
     } catch (err) {
       console.log(err);
+      usernameErrorMsg = err as string;
+      setTimeout(() => {
+        usernameErrorMsg = '';
+      }, 5000);
     } finally {
       disabled = false;
     }
+  };
+
+  const submitPassword = async (e : Event) => {
+    disabled = true;
+    e.preventDefault();
+
+    const { error } = await supabase.functions.invoke('update-user-password', {
+      body: { user_id, new_password }
+    });
+
+    disabled = false;
+    new_password = '';
+
+    if (error) {
+      console.log('--error--', error);
+      passwordErrorMsg = error.message;
+      setTimeout(() => {
+        passwordErrorMsg = '';
+      }, 5000);
+      return;
+    }
+    setTimeout(() => {
+      showUpdatePasswordSuccess = false;
+    }, 2000);
+    showUpdatePasswordSuccess = true;
   };
 
   const toggleUsersGroups = async (group_id: string) => {
@@ -252,7 +289,7 @@
 
   <form onsubmit={submitEmail}>
     <label class="block">
-      <span class="text-sm">Email address</span>
+      <span class="text-sm">Email adres</span>
       <input type="email" {disabled}
         class={{
           'input': true,
@@ -272,9 +309,17 @@
           {emailErrorMsg}
         </span>
       {/if}
+      {#if showUpdateEmailSuccess}
+        <span class="text-success">
+          Email adres aangepast
+        </span>
+      {/if}
     </label>
     <button type="submit" class="btn btn-primary"
-      {disabled}
+      disabled={disabled
+        || email.length < 4
+        || email.trim() === initEmail
+        || !emailRegex.test(email)}
     >
       Pas aan
     </button>
@@ -298,9 +343,56 @@
         bind:value={username}
         required
       />
+      {#if usernameErrorMsg}
+        <span class="text-error">
+          {usernameErrorMsg}
+        </span>
+      {/if}
+      {#if showUpdateUsernameSuccess}
+        <span class="text-success">
+          Gebruikersnaam aangepast
+        </span>
+      {/if}
     </label>
     <button type="submit" class="btn btn-primary"
-      {disabled}
+      disabled={disabled
+        || username.length < 3
+        || username.trim() === usernames.map.get(user_id)}
+    >
+      Pas aan
+    </button>
+  </form>
+
+  <form onsubmit={submitPassword}>
+    <label class="block">
+      <span class="text-sm">Nieuw paswoord</span>
+      <input type="text" {disabled}
+        class={{
+          'input': true,
+          'input-bordered': true,
+          'w-full': true,
+          'invalid:border-error': true,
+          'invalid:text-error': true,
+          'mb-2': true,
+          'input-success': showUpdatePasswordSuccess,
+          'input-error': false,
+        }}
+        bind:value={new_password}
+        required
+      />
+      {#if passwordErrorMsg}
+        <span class="text-error">
+          {passwordErrorMsg}
+        </span>
+      {/if}
+      {#if showUpdatePasswordSuccess}
+        <span class="text-success">
+          Paswoord aangepast
+        </span>
+      {/if}
+    </label>
+    <button type="submit" class="btn btn-primary"
+      disabled={disabled || new_password.length < 8}
     >
       Pas aan
     </button>
